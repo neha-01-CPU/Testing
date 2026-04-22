@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v4.8 (Full-Screen Podium & Layout Fix)
+   PICAZO — script.js  v4.9 (Smooth Game Over & Layout Fix)
 ================================================================ */
 'use strict';
 
@@ -63,13 +63,12 @@ const gameCanvas = $('game-canvas'), canvasWrap = $('canvas-wrap'), ctx = gameCa
 const overlayWordSelect = $('overlay-word-select'), overlayRoundEnd = $('overlay-round-end'), wsCards = $('ws-cards');
 const contextMenu = $('context-menu'), ctxName = $('ctx-name'), ctxPts = $('ctx-pts'), ctxAv = $('ctx-av');
 
-// STRUCTURAL FIX: Pluck the Round End overlay out of the canvas so it covers the whole screen
 if (overlayRoundEnd) {
   document.body.appendChild(overlayRoundEnd);
   overlayRoundEnd.style.position = 'fixed';
   overlayRoundEnd.style.zIndex = '9999';
   overlayRoundEnd.style.borderRadius = '0';
-  overlayRoundEnd.style.height = '100dvh'; // Ensures it covers mobile screens perfectly
+  overlayRoundEnd.style.height = '100dvh';
 }
 
 /* ════════════════════════════════════════════
@@ -375,8 +374,9 @@ function endRound(allGuessed = false) {
   clearInterval(S.timerInterval); BotManager.stop();
   addChat('system', '', `⏰ Round over! Word was: "${S.currentWord}"`);
   
-  const btnWrap = document.getElementById('podium-btns');
-  if (btnWrap) btnWrap.style.display = 'none';
+  // Hide podium buttons if they somehow exist during standard round break
+  const oldBtnWrap = document.getElementById('podium-btns');
+  if (oldBtnWrap) oldBtnWrap.style.display = 'none';
   
   if (S.guessedIds.size > 0 && S.players[S.drawerIdx]) {
     const bonus = Math.min(S.guessedIds.size * 30, 150);
@@ -392,14 +392,38 @@ function endRound(allGuessed = false) {
   if(reWordP) reWordP.innerHTML = `The word was: <strong>${S.currentWord}</strong>`;
 
   $('re-scores').innerHTML = sorted.map((p, i) => `<div class="re-score-row" style="animation-delay:${i*0.07}s"><span class="re-score-name">${i===0?'🥇':i===1?'🥈':i===2?'🥉':''} ${escHtml(p.name)}</span><span class="re-score-pts">${p.score} pts</span></div>`).join('');
-  overlayRoundEnd.classList.remove('hidden');
   
-  let cd = 5; $('re-countdown').textContent = cd;
-  const cdInt = setInterval(() => { cd--; $('re-countdown').textContent = cd; if (cd <= 0) { clearInterval(cdInt); overlayRoundEnd.classList.add('hidden'); nextRound(); } }, 1000);
+  overlayRoundEnd.classList.remove('hidden');
+
+  // Check if this was the absolutely final turn of the game
+  const isLastTurn = S.round >= S.totalRounds;
+  
+  // Update UX text appropriately 
+  $('re-next').style.display = '';
+  $('re-next').innerHTML = isLastTurn 
+    ? `Game Over in <span id="re-countdown">4</span>s...` 
+    : `Next round in <span id="re-countdown">4</span>s...`;
+  
+  let cd = 4; 
+  const cdInt = setInterval(() => { 
+    cd--; 
+    const cdSpan = $('re-countdown');
+    if (cdSpan) cdSpan.textContent = cd; 
+    
+    if (cd <= 0) { 
+      clearInterval(cdInt); 
+      if (isLastTurn) {
+        endGame(); // Transitions smoothly into Game Over screen
+      } else {
+        overlayRoundEnd.classList.add('hidden'); 
+        nextRound(); 
+      }
+    } 
+  }, 1000);
 }
 
 function nextRound() {
-  S.round++; if (S.round > S.totalRounds) { endGame(); return; }
+  S.round++; 
   S.drawerIdx = (S.drawerIdx + 1) % S.players.length; S.isDrawer = S.players[S.drawerIdx].id === S.myId;
   roundBadge.textContent = `Round ${S.round}/${S.totalRounds}`; S.currentWord = ''; buildLeaderboard();
   addChat('system', '', `🔄 Round ${S.round} — ${S.players[S.drawerIdx].name} draws!`); startWordSelection();
@@ -411,6 +435,8 @@ function nextRound() {
 function endGame() {
   clearInterval(S.timerInterval); BotManager.stop();
   const winner = [...S.players].sort((a, b) => b.score - a.score)[0];
+  
+  // We don't hide the overlay, we just seamlessly update the content
   overlayRoundEnd.classList.remove('hidden'); 
   $('re-emoji').textContent = '🏆'; 
   $('re-title').textContent = 'Game Over!'; 
@@ -423,30 +449,31 @@ function endGame() {
   
   injectGlassyStyles();
 
-  let btnWrap = document.getElementById('podium-btns');
-  if (!btnWrap) {
-    btnWrap = document.createElement('div');
-    btnWrap.id = 'podium-btns';
-    btnWrap.className = 'podium-btn-wrap';
+  // Scrape away any old buttons if they exist
+  let oldBtnWrap = document.getElementById('podium-btns');
+  if (oldBtnWrap) oldBtnWrap.remove();
 
-    const playBtn = document.createElement('button');
-    playBtn.innerHTML = '<span>🔄 Play Again</span>';
-    playBtn.className = 'glass-fluid-btn play-btn';
-    playBtn.onclick = () => resetGame();
+  // Create fresh buttons
+  const btnWrap = document.createElement('div');
+  btnWrap.id = 'podium-btns';
+  btnWrap.className = 'podium-btn-wrap';
 
-    const homeBtn = document.createElement('button');
-    homeBtn.innerHTML = '<span>🏠 Home</span>';
-    homeBtn.className = 'glass-fluid-btn home-btn';
-    homeBtn.onclick = () => location.reload(); 
+  const playBtn = document.createElement('button');
+  playBtn.innerHTML = '<span>🔄 Play Again</span>';
+  playBtn.className = 'glass-fluid-btn play-btn';
+  playBtn.onclick = () => resetGame();
 
-    btnWrap.appendChild(playBtn);
-    btnWrap.appendChild(homeBtn);
-    
-    // Attach to the full-screen overlay container
-    overlayRoundEnd.appendChild(btnWrap);
-    overlayRoundEnd.style.flexDirection = 'column';
-  }
-  btnWrap.style.display = 'flex';
+  const homeBtn = document.createElement('button');
+  homeBtn.innerHTML = '<span>🏠 Home</span>';
+  homeBtn.className = 'glass-fluid-btn home-btn';
+  homeBtn.onclick = () => location.reload(); 
+
+  btnWrap.appendChild(playBtn);
+  btnWrap.appendChild(homeBtn);
+  
+  // Attach to the full-screen overlay container
+  overlayRoundEnd.appendChild(btnWrap);
+  overlayRoundEnd.style.flexDirection = 'column';
   
   showEventPopup('🏆', `${winner.name} wins the game!`);
 }
@@ -461,10 +488,17 @@ function injectGlassyStyles() {
       flex-wrap: wrap;
       justify-content: center;
       gap: 15px;
-      margin-top: 25px; /* Free floating below the card */
+      margin-top: 25px; 
       z-index: 100;
-      animation: popupIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+      width: 100%;
+      animation: btnPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
     }
+    
+    @keyframes btnPop {
+      from { opacity: 0; transform: translateY(20px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
     .glass-fluid-btn {
       position: relative;
       overflow: hidden;
@@ -519,7 +553,7 @@ function injectGlassyStyles() {
 function resetGame() {
   overlayRoundEnd.classList.add('hidden');
   const btnWrap = document.getElementById('podium-btns');
-  if (btnWrap) btnWrap.style.display = 'none';
+  if (btnWrap) btnWrap.remove(); // Destroy old buttons completely
 
   S.players.forEach(p => { p.score = 0; p.guessed = false; });
   S.round = 1; S.drawerIdx = 0; S.isDrawer = S.players[S.drawerIdx].id === S.myId;
