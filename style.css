@@ -145,38 +145,52 @@ html, body {
 
 .logo-text {
   font-family: var(--f-display);
-  font-size: 4.4rem;
-  letter-spacing: 3px;
-  color: #ffffff;
-  text-shadow:
-    0 0 5px #ffffff,
-    0 0 10px #ffffff,
-    0 0 20px #2ecc87,
-    0 0 40px #2ecc87;
+  font-size: 4.8rem; /* Increased size */
+  letter-spacing: 2px;
+  /* Deep Indigo, Bright Blue, and Dark Pink gradient */
+  background: linear-gradient(135deg, #4a8fe8 0%, #5c6ef8 40%, #db2777 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 6px 14px rgba(92, 110, 248, 0.4));
   line-height: 1;
 }
 
 .lobby-tagline {
   font-family: var(--f-body);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 900;
-  color: #2ecc87;
   text-transform: uppercase;
-  letter-spacing: 5px;
-  margin-top: 12px;
-  text-shadow: 0 2px 8px rgba(46, 204, 135, 0.4);
+  letter-spacing: 3.5px;
+  margin-top: 8px;
+  
+  /* Multi-colored gradient */
+  background: linear-gradient(to right, #4a8fe8, #2ecc87, #f4b942, #ec4899, #5c6ef8);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  /* Slowly moving gradient + glowing effect */
+  animation: gradientGlow 5s ease-in-out infinite;
 }
 
-
-
-
-
-
-
-@keyframes sharpGlow {
-  0%, 100% { text-shadow: 0 0 4px rgba(74,143,232,0.2); color: var(--txt-mid); }
-  50% { text-shadow: 0 0 15px rgba(92,110,248,0.9), 0 0 30px rgba(92,110,248,0.6); color: var(--indigo); }
+/* The smooth glowing and color-shifting animation */
+@keyframes gradientGlow {
+  0% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 6px rgba(74, 143, 232, 0.4));
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: drop-shadow(0 0 16px rgba(236, 72, 153, 0.8));
+  }
+  100% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 6px rgba(74, 143, 232, 0.4));
+  }
 }
+
 
 .section-block {
   width: 100%;
