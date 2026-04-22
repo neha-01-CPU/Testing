@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v5.0 (Premium Dicebear Avatars)
+   PICAZO — script.js  v5.1 (Premium Avatars & Sync Fix)
 ================================================================ */
 'use strict';
 
@@ -33,40 +33,38 @@ const WORD_BANK = [
 ];
 
 const PREMIUM_AVATARS = [
-const PREMIUM_AVATARS = [
   // Style 1: Micah (Clean, modern, minimalist humans)
-  "https://api.dicebear.com/7.x/micah/svg?seed=Liam&backgroundColor=b6e3f4",     // Male
-  "https://api.dicebear.com/7.x/micah/svg?seed=Olivia&backgroundColor=ffd5dc",   // Female
-  "https://api.dicebear.com/7.x/micah/svg?seed=Noah&backgroundColor=d1d4f9",     // Male
-  "https://api.dicebear.com/7.x/micah/svg?seed=Emma&backgroundColor=ffdfbf",     // Female
-  "https://api.dicebear.com/7.x/micah/svg?seed=Oliver&backgroundColor=c0aede",   // Male
-  "https://api.dicebear.com/7.x/micah/svg?seed=Ava&backgroundColor=b4e4c4",      // Female
+  "https://api.dicebear.com/7.x/micah/svg?seed=Liam&backgroundColor=b6e3f4",     
+  "https://api.dicebear.com/7.x/micah/svg?seed=Olivia&backgroundColor=ffd5dc",   
+  "https://api.dicebear.com/7.x/micah/svg?seed=Noah&backgroundColor=d1d4f9",     
+  "https://api.dicebear.com/7.x/micah/svg?seed=Emma&backgroundColor=ffdfbf",     
+  "https://api.dicebear.com/7.x/micah/svg?seed=Oliver&backgroundColor=c0aede",   
+  "https://api.dicebear.com/7.x/micah/svg?seed=Ava&backgroundColor=b4e4c4",      
 
-  // Style 2: Lorelei (Expressive, cute, big eyes)
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=James&backgroundColor=ffdfbf",  // Male
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=Isabella&backgroundColor=b6e3f4",// Female
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=William&backgroundColor=b4e4c4",// Male
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=Mia&backgroundColor=ffd5dc",    // Female
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=Benjamin&backgroundColor=d1d4f9",// Male
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=Amelia&backgroundColor=c0aede", // Female
+  // Style 2: Lorelei (Expressive, cute)
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=James&backgroundColor=ffdfbf",  
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=Isabella&backgroundColor=b6e3f4",
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=William&backgroundColor=b4e4c4",
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=Mia&backgroundColor=ffd5dc",    
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=Benjamin&backgroundColor=d1d4f9",
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=Amelia&backgroundColor=c0aede", 
 
-  // Style 3: Adventurer (Detailed, playful, great hair)
-  "https://api.dicebear.com/7.x/adventurer/svg?seed=Lucas&backgroundColor=c0aede",// Male
-  "https://api.dicebear.com/7.x/adventurer/svg?seed=Harper&backgroundColor=ffdfbf",// Female
-  "https://api.dicebear.com/7.x/adventurer/svg?seed=Henry&backgroundColor=b6e3f4",// Male
-  "https://api.dicebear.com/7.x/adventurer/svg?seed=Evelyn&backgroundColor=d1d4f9",// Female
-  "https://api.dicebear.com/7.x/adventurer/svg?seed=Alexander&backgroundColor=ffd5dc",// Male
-  "https://api.dicebear.com/7.x/adventurer/svg?seed=Abigail&backgroundColor=b4e4c4",// Female
+  // Style 3: Adventurer (Detailed, playful)
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Lucas&backgroundColor=c0aede",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Harper&backgroundColor=ffdfbf",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Henry&backgroundColor=b6e3f4",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Evelyn&backgroundColor=d1d4f9",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Alexander&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Abigail&backgroundColor=b4e4c4",
 
-  // Style 4: Avataaars (The classic flat-design standard)
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Daniel&backgroundColor=b4e4c4",// Male
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily&backgroundColor=c0aede",// Female
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Matthew&backgroundColor=ffdfbf",// Male
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Elizabeth&backgroundColor=b6e3f4",// Female
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Jackson&backgroundColor=d1d4f9",// Male
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia&backgroundColor=ffd5dc" // Female
+  // Style 4: Avataaars (Classic flat-design standard)
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Daniel&backgroundColor=b4e4c4",
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily&backgroundColor=c0aede",
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Matthew&backgroundColor=ffdfbf",
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Elizabeth&backgroundColor=b6e3f4",
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Jackson&backgroundColor=d1d4f9",
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia&backgroundColor=ffd5dc" 
 ];
-
 
 let S = {
   avatarIdx: 0, playerName: '', totalRounds: 3, drawTime: 45, maxPlayers: 8, hintsCount: 2, customWords: [],
@@ -87,6 +85,7 @@ const playerList = $('player-list'), chatMessages = $('chat-messages'), chatInpu
 const gameCanvas = $('game-canvas'), canvasWrap = $('canvas-wrap'), ctx = gameCanvas.getContext('2d', { willReadFrequently: true });
 const overlayWordSelect = $('overlay-word-select'), overlayRoundEnd = $('overlay-round-end'), wsCards = $('ws-cards');
 const contextMenu = $('context-menu'), ctxName = $('ctx-name'), ctxPts = $('ctx-pts'), ctxAv = $('ctx-av');
+const avImg = $('av-img'); // Fixed target for Lobby Avatar
 
 if (overlayRoundEnd) {
   document.body.appendChild(overlayRoundEnd);
@@ -106,7 +105,7 @@ const BotManager = {
       S.players.push({ 
         id: 'bot_'+i, 
         name: this.names[i] + ' (Bot)', 
-        avatarDef: PREMIUM_AVATARS[(i+3)%PREMIUM_AVATARS.length], 
+        avatarDef: PREMIUM_AVATARS[(i+5)%PREMIUM_AVATARS.length], 
         score: 0, isSelf: false, guessed: false, isBot: true 
       });
     }
@@ -161,11 +160,12 @@ const BotManager = {
 };
 
 /* ════════════════════════════════════════════
-   LOBBY & PRIVATE ROOM
+   LOBBY & PRIVATE ROOM (IMAGE FIX)
 ════════════════════════════════════════════ */
 function setAvatar(i) {
   S.avatarIdx = ((i % PREMIUM_AVATARS.length) + PREMIUM_AVATARS.length) % PREMIUM_AVATARS.length;
-  $('av-img').src = PREMIUM_AVATARS[S.avatarIdx];
+  
+  if(avImg) avImg.src = PREMIUM_AVATARS[S.avatarIdx];
   
   $('av-dots').innerHTML = '';
   PREMIUM_AVATARS.forEach((_, j) => {
@@ -228,7 +228,7 @@ function setupMobileLayout() {
 window.addEventListener('resize', () => { setupMobileLayout(); resizeCanvas(); });
 
 /* ════════════════════════════════════════════
-   GAME INIT & LEADERBOARD
+   GAME INIT & LEADERBOARD (IMAGE FIX)
 ════════════════════════════════════════════ */
 function initGame() {
   S.players = [{ id: S.myId, name: S.playerName, avatarDef: PREMIUM_AVATARS[S.avatarIdx], score: 0, isSelf: true, guessed: false }];
@@ -262,12 +262,12 @@ function buildLeaderboard() {
     // Inject Image directly instead of Canvas
     const avWrap = document.createElement('div'); 
     avWrap.className = 'pi-av';
-    const avImg = document.createElement('img');
-    avImg.src = p.avatarDef;
-    avImg.style.width = '100%'; 
-    avImg.style.height = '100%'; 
-    avImg.style.objectFit = 'cover';
-    avWrap.appendChild(avImg);
+    const avImgList = document.createElement('img');
+    avImgList.src = p.avatarDef;
+    avImgList.style.width = '100%'; 
+    avImgList.style.height = '100%'; 
+    avImgList.style.objectFit = 'cover';
+    avWrap.appendChild(avImgList);
     
     li.innerHTML = `<div class="pi-rank ${rankClass}">${rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : (rank + 1)}</div>`;
     li.appendChild(avWrap);
@@ -354,7 +354,7 @@ function chooseWord(word) {
   S.currentWord = word; S.revealedIdx = []; renderWordBlanks(); startRoundTimer();
   addChat('system', '', `${S.players[S.drawerIdx].name} is drawing! 🖊️`);
   ctx.fillStyle = 'white'; ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-  S.history = []; // Clear undo memory for new round
+  S.history = []; 
   BotManager.startRound();
 }
 
@@ -508,9 +508,9 @@ function injectGlassyStyles() {
     .glass-fluid-btn:hover { transform: translateY(-4px) scale(1.05); }
     .glass-fluid-btn:hover::before { left: 100%; }
     .glass-fluid-btn:active { transform: translateY(2px) scale(0.95); }
-    .play-btn { background: linear-gradient(135deg, rgba(46, 204, 135, 0.85), rgba(30, 180, 110, 0.95)); box-shadow: 0 8px 25px rgba(46,204,135,0.4), inset 0 2px 0 rgba(255,255,255,0.5); }
+    .play-btn { background: linear-gradient(135deg, #4acf8a, #2ecc87); box-shadow: 0 8px 25px rgba(46,204,135,0.4), inset 0 2px 0 rgba(255,255,255,0.5); }
     .play-btn:hover { box-shadow: 0 12px 35px rgba(46,204,135,0.6), inset 0 2px 0 rgba(255,255,255,0.6); }
-    .home-btn { background: linear-gradient(135deg, rgba(240, 82, 94, 0.85), rgba(200, 40, 60, 0.95)); box-shadow: 0 8px 25px rgba(240,82,94,0.4), inset 0 2px 0 rgba(255,255,255,0.5); }
+    .home-btn { background: linear-gradient(135deg, #f0525e, #cc3333); box-shadow: 0 8px 25px rgba(240,82,94,0.4), inset 0 2px 0 rgba(255,255,255,0.5); }
     .home-btn:hover { box-shadow: 0 12px 35px rgba(240,82,94,0.6), inset 0 2px 0 rgba(255,255,255,0.6); }
   `;
   document.head.appendChild(style);
@@ -730,7 +730,7 @@ function openContextMenu(e, player) {
   e.stopPropagation(); S.ctxTarget = player;
   ctxName.textContent = player.name; ctxPts.textContent = player.score + ' pts';
   
-  // Inject the image here too
+  // Inject the image into the context menu safely
   ctxAv.innerHTML = ''; 
   const img = document.createElement('img'); 
   img.src = player.avatarDef; 
