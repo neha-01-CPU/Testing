@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v4.9 (Smooth Game Over & Layout Fix)
+   PICAZO — script.js  v5.0 (Premium Dicebear Avatars)
 ================================================================ */
 'use strict';
 
@@ -32,15 +32,19 @@ const WORD_BANK = [
   {w:'octopus',e:'🐙'},{w:'lighthouse',e:'🏮'},{w:'hurricane',e:'🌀'},{w:'keyboard',e:'⌨️'}
 ];
 
-const AVATAR_DEFS = [
-  {name:'Alex', skin:'#fdd09a',hair:'#3a2010',hCol:'#222', style:'m-short', accent:'#4a8fe8'},
-  {name:'Jamie', skin:'#f9c49a',hair:'#1a0a0a',hCol:'#111', style:'f-long', accent:'#9c5cf8'},
-  {name:'Morgan', skin:'#e8a87c',hair:'#6a3010',hCol:'#4a1a0a',style:'m-beard', accent:'#e87c4a'},
-  {name:'Taylor', skin:'#fdd8b0',hair:'#8b4513',hCol:'#5a2a0a',style:'f-bun', accent:'#4acf8a'},
-  {name:'Jordan', skin:'#c8884a',hair:'#2a1808',hCol:'#1a0a00',style:'m-spec', accent:'#f4b942'},
-  {name:'Casey', skin:'#fce0c8',hair:'#d4406a',hCol:'#a82050',style:'f-long', accent:'#f0527a'},
-  {name:'Riley', skin:'#f0c090',hair:'#4a3020',hCol:'#2a1808',style:'m-short', accent:'#4a7ad8'},
-  {name:'Quinn', skin:'#fdd0a8',hair:'#508860',hCol:'#306040',style:'f-bun', accent:'#50b8a8'},
+const PREMIUM_AVATARS = [
+  "https://api.dicebear.com/7.x/micah/svg?seed=P1&backgroundColor=b6e3f4", 
+  "https://api.dicebear.com/7.x/shapes/svg?seed=P2&backgroundColor=c0aede",
+  "https://api.dicebear.com/7.x/bottts/svg?seed=P3&backgroundColor=ffd5dc", 
+  "https://api.dicebear.com/7.x/micah/svg?seed=P4&backgroundColor=ffdfbf",
+  "https://api.dicebear.com/7.x/shapes/svg?seed=P5&backgroundColor=d1d4f9", 
+  "https://api.dicebear.com/7.x/micah/svg?seed=P6&backgroundColor=b6e3f4",
+  "https://api.dicebear.com/7.x/bottts/svg?seed=P7&backgroundColor=c0aede", 
+  "https://api.dicebear.com/7.x/shapes/svg?seed=P8&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/7.x/micah/svg?seed=P9&backgroundColor=ffdfbf", 
+  "https://api.dicebear.com/7.x/bottts/svg?seed=P10&backgroundColor=b6e3f4",
+  "https://api.dicebear.com/7.x/shapes/svg?seed=P11&backgroundColor=d1d4f9", 
+  "https://api.dicebear.com/7.x/micah/svg?seed=P12&backgroundColor=c0aede"
 ];
 
 let S = {
@@ -78,7 +82,12 @@ const BotManager = {
   botIntervals: [], names: ["Alex", "Jamie", "Taylor"],
   initBots: function() {
     for(let i=0; i<3; i++) {
-      S.players.push({ id: 'bot_'+i, name: this.names[i] + ' (Bot)', avatarDef: AVATAR_DEFS[(i+3)%AVATAR_DEFS.length], score: 0, isSelf: false, guessed: false, isBot: true });
+      S.players.push({ 
+        id: 'bot_'+i, 
+        name: this.names[i] + ' (Bot)', 
+        avatarDef: PREMIUM_AVATARS[(i+3)%PREMIUM_AVATARS.length], 
+        score: 0, isSelf: false, guessed: false, isBot: true 
+      });
     }
   },
   stop: function() { this.botIntervals.forEach(clearInterval); this.botIntervals.forEach(clearTimeout); this.botIntervals = []; },
@@ -131,39 +140,14 @@ const BotManager = {
 };
 
 /* ════════════════════════════════════════════
-   AVATAR RENDERER
-════════════════════════════════════════════ */
-function drawAvatar(canvas, def, size = 96) {
-  const c = canvas.getContext('2d'), W = size, H = size; c.clearRect(0, 0, W, H);
-  const bg = c.createLinearGradient(0, 0, W, H); bg.addColorStop(0, def.accent + '44'); bg.addColorStop(1, def.accent + '18');
-  c.fillStyle = bg; c.beginPath(); if (c.roundRect) { c.roundRect(0, 0, W, H, W * 0.2); } else { c.rect(0, 0, W, H); } c.fill();
-  const cx = W / 2, headR = W * 0.22, headY = H * 0.4;
-  c.fillStyle = def.accent; c.beginPath(); c.ellipse(cx, H * 0.88, W * 0.28, H * 0.22, 0, 0, Math.PI * 2); c.fill();
-  c.fillStyle = def.skin; c.fillRect(cx - W * 0.065, headY + headR * 0.8, W * 0.13, H * 0.1);
-  c.fillStyle = def.hCol;
-  if (def.style === 'f-long') { c.beginPath(); c.ellipse(cx, headY+headR*0.6, headR*1.15, headR*1.5, 0, 0, Math.PI*2); c.fill(); } 
-  else if (def.style === 'f-bun') { c.beginPath(); c.ellipse(cx, headY+headR*0.5, headR*1.05, headR*1.2, 0, 0, Math.PI*2); c.fill(); c.beginPath(); c.arc(cx, headY-headR*1.05, headR*0.4, 0, Math.PI*2); c.fill(); }
-  c.fillStyle = def.skin; c.beginPath(); c.ellipse(cx, headY, headR, headR * 1.1, 0, 0, Math.PI * 2); c.fill();
-  c.fillStyle = def.hCol;
-  if (def.style === 'm-short') { c.beginPath(); c.ellipse(cx, headY-headR*0.65, headR*1.0, headR*0.55, 0, Math.PI, Math.PI*2); c.fill(); } 
-  else if (def.style === 'f-long') { c.beginPath(); c.ellipse(cx, headY-headR*0.7, headR*0.95, headR*0.45, 0, Math.PI, Math.PI*2); c.fill(); } 
-  else if (def.style === 'f-bun') { c.beginPath(); c.ellipse(cx, headY-headR*0.72, headR*0.92, headR*0.44, 0, Math.PI, Math.PI*2); c.fill(); }
-  const eyeY = headY - headR * 0.08, eyeOffX = headR * 0.42;
-  [-1,1].forEach(side => {
-    c.fillStyle = '#fff'; c.beginPath(); c.ellipse(cx+side*eyeOffX, eyeY, headR*0.2, headR*0.24, 0, 0, Math.PI*2); c.fill();
-    c.fillStyle = def.hCol; c.beginPath(); c.arc(cx+side*eyeOffX, eyeY+1, headR*0.13, 0, Math.PI*2); c.fill();
-    c.fillStyle = '#000'; c.beginPath(); c.arc(cx+side*eyeOffX, eyeY+1, headR*0.065, 0, Math.PI*2); c.fill();
-  });
-}
-
-/* ════════════════════════════════════════════
    LOBBY & PRIVATE ROOM
 ════════════════════════════════════════════ */
 function setAvatar(i) {
-  S.avatarIdx = ((i % AVATAR_DEFS.length) + AVATAR_DEFS.length) % AVATAR_DEFS.length;
-  $('av-canvas').width = 96; $('av-canvas').height = 96; drawAvatar($('av-canvas'), AVATAR_DEFS[S.avatarIdx], 96);
+  S.avatarIdx = ((i % PREMIUM_AVATARS.length) + PREMIUM_AVATARS.length) % PREMIUM_AVATARS.length;
+  $('av-img').src = PREMIUM_AVATARS[S.avatarIdx];
+  
   $('av-dots').innerHTML = '';
-  AVATAR_DEFS.forEach((_, j) => {
+  PREMIUM_AVATARS.forEach((_, j) => {
     const d = document.createElement('button'); d.className = 'av-dot' + (j === S.avatarIdx ? ' active' : '');
     d.addEventListener('click', () => setAvatar(j)); $('av-dots').appendChild(d);
   });
@@ -226,7 +210,7 @@ window.addEventListener('resize', () => { setupMobileLayout(); resizeCanvas(); }
    GAME INIT & LEADERBOARD
 ════════════════════════════════════════════ */
 function initGame() {
-  S.players = [{ id: S.myId, name: S.playerName, avatarDef: AVATAR_DEFS[S.avatarIdx], score: 0, isSelf: true, guessed: false }];
+  S.players = [{ id: S.myId, name: S.playerName, avatarDef: PREMIUM_AVATARS[S.avatarIdx], score: 0, isSelf: true, guessed: false }];
   BotManager.initBots(); S.drawerIdx = 0;
   setupToolbar(); setupChat(); setupContextMenu();
   initCanvas();
@@ -253,8 +237,17 @@ function buildLeaderboard() {
     const isDrawer = p.id === S.players[S.drawerIdx]?.id;
     li.className = 'player-item' + (isDrawer ? ' is-drawing' : '') + (p.guessed ? ' guessed' : '');
     const rankClass = rank === 0 ? 'gold' : rank === 1 ? 'silver' : rank === 2 ? 'bronze' : '';
-    const avWrap = document.createElement('div'); avWrap.className = 'pi-av';
-    const avC = document.createElement('canvas'); avC.width = 30; avC.height = 30; drawAvatar(avC, p.avatarDef, 30); avWrap.appendChild(avC);
+    
+    // Inject Image directly instead of Canvas
+    const avWrap = document.createElement('div'); 
+    avWrap.className = 'pi-av';
+    const avImg = document.createElement('img');
+    avImg.src = p.avatarDef;
+    avImg.style.width = '100%'; 
+    avImg.style.height = '100%'; 
+    avImg.style.objectFit = 'cover';
+    avWrap.appendChild(avImg);
+    
     li.innerHTML = `<div class="pi-rank ${rankClass}">${rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : (rank + 1)}</div>`;
     li.appendChild(avWrap);
     li.insertAdjacentHTML('beforeend', `<div class="pi-info"><div class="pi-name">${p.isSelf ? '⭐ ' : ''}${escHtml(p.name)}</div><div class="pi-score">${p.score} pts</div></div>`);
@@ -374,7 +367,6 @@ function endRound(allGuessed = false) {
   clearInterval(S.timerInterval); BotManager.stop();
   addChat('system', '', `⏰ Round over! Word was: "${S.currentWord}"`);
   
-  // Hide podium buttons if they somehow exist during standard round break
   const oldBtnWrap = document.getElementById('podium-btns');
   if (oldBtnWrap) oldBtnWrap.style.display = 'none';
   
@@ -395,10 +387,7 @@ function endRound(allGuessed = false) {
   
   overlayRoundEnd.classList.remove('hidden');
 
-  // Check if this was the absolutely final turn of the game
   const isLastTurn = S.round >= S.totalRounds;
-  
-  // Update UX text appropriately 
   $('re-next').style.display = '';
   $('re-next').innerHTML = isLastTurn 
     ? `Game Over in <span id="re-countdown">4</span>s...` 
@@ -413,7 +402,7 @@ function endRound(allGuessed = false) {
     if (cd <= 0) { 
       clearInterval(cdInt); 
       if (isLastTurn) {
-        endGame(); // Transitions smoothly into Game Over screen
+        endGame();
       } else {
         overlayRoundEnd.classList.add('hidden'); 
         nextRound(); 
@@ -436,7 +425,6 @@ function endGame() {
   clearInterval(S.timerInterval); BotManager.stop();
   const winner = [...S.players].sort((a, b) => b.score - a.score)[0];
   
-  // We don't hide the overlay, we just seamlessly update the content
   overlayRoundEnd.classList.remove('hidden'); 
   $('re-emoji').textContent = '🏆'; 
   $('re-title').textContent = 'Game Over!'; 
@@ -449,11 +437,9 @@ function endGame() {
   
   injectGlassyStyles();
 
-  // Scrape away any old buttons if they exist
   let oldBtnWrap = document.getElementById('podium-btns');
-  if (oldBtnWrap) oldBtnWrap.remove();
+  if (oldBtnWrap) oldBtnWrap.remove(); 
 
-  // Create fresh buttons
   const btnWrap = document.createElement('div');
   btnWrap.id = 'podium-btns';
   btnWrap.className = 'podium-btn-wrap';
@@ -471,7 +457,6 @@ function endGame() {
   btnWrap.appendChild(playBtn);
   btnWrap.appendChild(homeBtn);
   
-  // Attach to the full-screen overlay container
   overlayRoundEnd.appendChild(btnWrap);
   overlayRoundEnd.style.flexDirection = 'column';
   
@@ -484,67 +469,27 @@ function injectGlassyStyles() {
   style.id = 'podium-liquid-styles';
   style.textContent = `
     .podium-btn-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 25px; 
-      z-index: 100;
-      width: 100%;
-      animation: btnPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 25px; 
+      z-index: 100; width: 100%; animation: btnPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
     }
-    
-    @keyframes btnPop {
-      from { opacity: 0; transform: translateY(20px) scale(0.9); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
+    @keyframes btnPop { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .glass-fluid-btn {
-      position: relative;
-      overflow: hidden;
-      padding: 14px 28px;
-      border-radius: 100px;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 900;
-      font-size: 1.05rem;
-      color: white;
-      cursor: pointer;
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid rgba(255,255,255,0.4);
+      position: relative; overflow: hidden; padding: 14px 28px; border-radius: 100px;
+      font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.05rem; color: white; cursor: pointer;
+      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.4);
     }
-    .glass-fluid-btn span {
-      position: relative;
-      z-index: 2;
-    }
+    .glass-fluid-btn span { position: relative; z-index: 2; }
     .glass-fluid-btn::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-      transition: all 0.4s ease;
-      z-index: 1;
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); transition: all 0.4s ease; z-index: 1;
     }
     .glass-fluid-btn:hover { transform: translateY(-4px) scale(1.05); }
     .glass-fluid-btn:hover::before { left: 100%; }
     .glass-fluid-btn:active { transform: translateY(2px) scale(0.95); }
-    
-    .play-btn {
-      background: linear-gradient(135deg, rgba(46, 204, 135, 0.85), rgba(30, 180, 110, 0.95));
-      box-shadow: 0 8px 25px rgba(46,204,135,0.4), inset 0 2px 0 rgba(255,255,255,0.5);
-    }
+    .play-btn { background: linear-gradient(135deg, rgba(46, 204, 135, 0.85), rgba(30, 180, 110, 0.95)); box-shadow: 0 8px 25px rgba(46,204,135,0.4), inset 0 2px 0 rgba(255,255,255,0.5); }
     .play-btn:hover { box-shadow: 0 12px 35px rgba(46,204,135,0.6), inset 0 2px 0 rgba(255,255,255,0.6); }
-    
-    .home-btn {
-      background: linear-gradient(135deg, rgba(240, 82, 94, 0.85), rgba(200, 40, 60, 0.95));
-      box-shadow: 0 8px 25px rgba(240,82,94,0.4), inset 0 2px 0 rgba(255,255,255,0.5);
-    }
+    .home-btn { background: linear-gradient(135deg, rgba(240, 82, 94, 0.85), rgba(200, 40, 60, 0.95)); box-shadow: 0 8px 25px rgba(240,82,94,0.4), inset 0 2px 0 rgba(255,255,255,0.5); }
     .home-btn:hover { box-shadow: 0 12px 35px rgba(240,82,94,0.6), inset 0 2px 0 rgba(255,255,255,0.6); }
   `;
   document.head.appendChild(style);
@@ -553,7 +498,7 @@ function injectGlassyStyles() {
 function resetGame() {
   overlayRoundEnd.classList.add('hidden');
   const btnWrap = document.getElementById('podium-btns');
-  if (btnWrap) btnWrap.remove(); // Destroy old buttons completely
+  if (btnWrap) btnWrap.remove(); 
 
   S.players.forEach(p => { p.score = 0; p.guessed = false; });
   S.round = 1; S.drawerIdx = 0; S.isDrawer = S.players[S.drawerIdx].id === S.myId;
@@ -763,7 +708,14 @@ function setupContextMenu() {
 function openContextMenu(e, player) {
   e.stopPropagation(); S.ctxTarget = player;
   ctxName.textContent = player.name; ctxPts.textContent = player.score + ' pts';
-  ctxAv.innerHTML = ''; const c = document.createElement('canvas'); c.width = 36; c.height = 36; drawAvatar(c, player.avatarDef, 36); ctxAv.appendChild(c);
+  
+  // Inject the image here too
+  ctxAv.innerHTML = ''; 
+  const img = document.createElement('img'); 
+  img.src = player.avatarDef; 
+  img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover'; 
+  ctxAv.appendChild(img);
+  
   contextMenu.classList.remove('hidden');
   contextMenu.style.left = Math.min(e.clientX, window.innerWidth - 200) + 'px';
   contextMenu.style.top = Math.min(e.clientY, window.innerHeight - 240) + 'px';
