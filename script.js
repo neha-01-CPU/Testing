@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v4.4 (The Bulletproof Fix)
+   PICAZO — script.js  v4.5 (Unified Touch/Mouse Input Engine)
 ================================================================ */
 'use strict';
 
@@ -221,6 +221,7 @@ function initGame() {
   S.players = [{ id: S.myId, name: S.playerName, avatarDef: AVATAR_DEFS[S.avatarIdx], score: 0, isSelf: true, guessed: false }];
   BotManager.initBots(); S.drawerIdx = 0;
   setupToolbar(); setupChat(); setupContextMenu();
+  initCanvas();
   
   timerNum.textContent = S.drawTime; 
   tFg.style.strokeDashoffset = '0';
@@ -407,15 +408,23 @@ function endGame() {
 }
 
 /* ════════════════════════════════════════════
-   CANVAS DRAWING & FLOOD FILL
+   CANVAS DRAWING (UNIFIED TOUCH & MOUSE)
 ════════════════════════════════════════════ */
 function initCanvas() {
-  resizeCanvas(); 
-  gameCanvas.addEventListener('pointerdown', onPointerDown); 
-  gameCanvas.addEventListener('pointermove', onPointerMove);
-  gameCanvas.addEventListener('pointerup', onPointerUp); 
-  gameCanvas.addEventListener('pointercancel', onPointerUp);
+  resizeCanvas();
+  
+  // Touch Handlers (Passive: false ensures we can prevent default scrolling)
+  gameCanvas.addEventListener('touchstart', onDrawStart, { passive: false });
+  gameCanvas.addEventListener('touchmove', onDrawMove, { passive: false });
+  gameCanvas.addEventListener('touchend', onDrawEnd);
+  gameCanvas.addEventListener('touchcancel', onDrawEnd);
+  
+  // Mouse Handlers
+  gameCanvas.addEventListener('mousedown', onDrawStart);
+  window.addEventListener('mousemove', onDrawMove);
+  window.addEventListener('mouseup', onDrawEnd);
 }
+
 function resizeCanvas() {
   const rect = canvasWrap.getBoundingClientRect(), W = Math.floor(rect.width), H = Math.floor(rect.height);
   if (W === 0 || H === 0) return;
@@ -423,43 +432,58 @@ function resizeCanvas() {
   gameCanvas.style.width = W + 'px'; gameCanvas.style.height = H + 'px';
   ctx.scale(S.dpr, S.dpr); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.fillStyle = 'white'; ctx.fillRect(0, 0, W, H);
 }
-function getPointerXY(e) { const r = gameCanvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
 
-function onPointerDown(e) { 
-  if (!S.isDrawer) return; 
-  try { gameCanvas.setPointerCapture(e.pointerId); } catch(err) {} // Bulletproof against mobile browser exceptions
-  S.isDrawing = true; 
-  const pos = getPointerXY(e); 
-  
+function getXY(e) {
+  const r = gameCanvas.getBoundingClientRect();
+  let cx = e.clientX, cy = e.clientY;
+  if (e.touches && e.touches.length > 0) {
+    cx = e.touches[0].clientX;
+    cy = e.touches[0].clientY;
+  } else if (e.changedTouches && e.changedTouches.length > 0) {
+    cx = e.changedTouches[0].clientX;
+    cy = e.changedTouches[0].clientY;
+  }
+  return { x: cx - r.left, y: cy - r.top };
+}
+
+function onDrawStart(e) {
+  if (e.type === 'touchstart') e.preventDefault();
+  if (!S.isDrawer) return;
+  S.isDrawing = true;
+  const pos = getXY(e);
+
   if (S.tool === 'fill') {
     floodFill(pos.x, pos.y, S.color);
     S.isDrawing = false;
     return;
   }
-  
-  ctx.beginPath(); 
-  ctx.moveTo(pos.x, pos.y); 
-  ctx.strokeStyle = S.tool === 'eraser' ? '#ffffff' : S.color; 
-  ctx.lineWidth = S.tool === 'eraser' ? S.brushSize * 3 : S.brushSize; 
+
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+  ctx.lineTo(pos.x, pos.y); // Creates an instant dot on tap
+  ctx.strokeStyle = S.tool === 'eraser' ? '#ffffff' : S.color;
+  ctx.lineWidth = S.tool === 'eraser' ? S.brushSize * 3 : S.brushSize;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
+  ctx.stroke();
 }
 
-function onPointerMove(e) { 
-  if (!S.isDrawer || !S.isDrawing) return; 
-  const pos = getPointerXY(e); 
-  ctx.lineTo(pos.x, pos.y); 
-  ctx.stroke(); 
+function onDrawMove(e) {
+  if (e.type === 'touchmove') e.preventDefault();
+  if (!S.isDrawer || !S.isDrawing) return;
+  const pos = getXY(e);
+  ctx.lineTo(pos.x, pos.y);
+  ctx.stroke();
   
-  /* Reset path to prevent memory lag */
+  // Reset path to avoid massive performance drops on long strokes
   ctx.beginPath();
   ctx.moveTo(pos.x, pos.y);
 }
 
-function onPointerUp(e) { 
-  if (!S.isDrawer) return; 
-  try { gameCanvas.releasePointerCapture(e.pointerId); } catch(err) {}
-  S.isDrawing = false; 
+function onDrawEnd(e) {
+  if (!S.isDrawer || !S.isDrawing) return;
+  S.isDrawing = false;
+  ctx.closePath();
 }
 
 function floodFill(startX, startY, fillHex) {
