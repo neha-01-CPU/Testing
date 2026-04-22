@@ -145,9 +145,8 @@ html, body {
 
 .logo-text {
   font-family: var(--f-display);
-  font-size: 4.8rem; /* Increased size */
+  font-size: 5.6rem; /* Massively increased size */
   letter-spacing: 2px;
-  /* Deep Indigo, Bright Blue, and Dark Pink gradient */
   background: linear-gradient(135deg, #4a8fe8 0%, #5c6ef8 40%, #db2777 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -157,12 +156,12 @@ html, body {
 }
 
 .lobby-tagline {
-  font-family: var(--f-body);
-  font-size: 0.80rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 3.5px;
-  margin-top: 8px;
+  font-family: var(--f-display); /* Switched to the playful, funny font */
+  font-size: 1.1rem; /* Reduced visual footprint */
+  font-weight: normal; 
+  text-transform: none; /* Removed all-caps so the fun font reads properly */
+  letter-spacing: 1.5px;
+  margin-top: 2px;
   
   /* Multi-colored gradient */
   background: linear-gradient(to right, #4a8fe8, #2ecc87, #f4b942, #ec4899, #5c6ef8);
@@ -174,6 +173,7 @@ html, body {
   /* Slowly moving gradient + glowing effect */
   animation: gradientGlow 5s ease-in-out infinite;
 }
+
 
 /* The smooth glowing and color-shifting animation */
 @keyframes gradientGlow {
