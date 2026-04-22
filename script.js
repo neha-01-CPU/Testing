@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v4.3 (The Ultimate Fix - UI + Bots)
+   PICAZO — script.js  v4.4 (The Bulletproof Fix)
 ================================================================ */
 'use strict';
 
@@ -171,7 +171,6 @@ $('btn-play').addEventListener('click', () => {
   transitionToGame();
 });
 
-/* Private Room Logic Restored */
 $('btn-private').addEventListener('click', () => $('modal-private').classList.remove('hidden'));
 $('btn-cancel-private').addEventListener('click', () => { $('modal-private').classList.add('hidden'); $('priv-invite-box').classList.add('hidden'); });
 
@@ -223,7 +222,6 @@ function initGame() {
   BotManager.initBots(); S.drawerIdx = 0;
   setupToolbar(); setupChat(); setupContextMenu();
   
-  /* Initial Timer Fix */
   timerNum.textContent = S.drawTime; 
   tFg.style.strokeDashoffset = '0';
   tFg.setAttribute('class', 't-fg');
@@ -253,7 +251,6 @@ function buildLeaderboard() {
     li.insertAdjacentHTML('beforeend', `<div class="pi-info"><div class="pi-name">${p.isSelf ? '⭐ ' : ''}${escHtml(p.name)}</div><div class="pi-score">${p.score} pts</div></div>`);
     if (isDrawer) li.insertAdjacentHTML('beforeend', `<span class="pi-badge">✏️</span>`); else if (p.guessed) li.insertAdjacentHTML('beforeend', `<span class="pi-badge">✅</span>`);
     
-    /* Click to open context menu on bots/other players */
     if (!p.isSelf) {
       li.style.cursor = 'pointer';
       li.addEventListener('click', e => openContextMenu(e, p));
@@ -290,7 +287,6 @@ function startWordSelection() {
   overlayWordSelect.classList.remove('hidden');
   const choices = shuffled(WORD_BANK).slice(0, 3);
   
-  /* Canvas Lock & UI hiding if not Drawer */
   const headerH2 = document.querySelector('.ws-header h2');
   const headerP = document.querySelector('.ws-header p');
   
@@ -309,7 +305,6 @@ function startWordSelection() {
       wsCards.appendChild(card);
     });
   } else {
-    /* Visually disable toolbar for guessers */
     $('toolbar').style.pointerEvents = 'none';
     $('toolbar').style.opacity = '0.4';
     wsCards.style.display = 'none';
@@ -343,7 +338,6 @@ function renderWordBlanks() {
   wordDisplay.innerHTML = ''; 
   if (!S.currentWord) { wordMeta.textContent = ''; return; }
   
-  /* Restored Word Length Indicator */
   wordMeta.textContent = S.isDrawer ? `You are drawing — ${S.currentWord.length} letters` : `${S.currentWord.length} letters`;
 
   for (let i = 0; i < S.currentWord.length; i++) {
@@ -370,7 +364,6 @@ function endRound(allGuessed = false) {
   clearInterval(S.timerInterval); BotManager.stop();
   addChat('system', '', `⏰ Round over! Word was: "${S.currentWord}"`);
   
-  /* Drawer Points Logic Restored & Announced */
   if (S.guessedIds.size > 0 && S.players[S.drawerIdx]) {
     const bonus = Math.min(S.guessedIds.size * 30, 150);
     S.players[S.drawerIdx].score += bonus;
@@ -405,7 +398,6 @@ function endGame() {
   $('re-emoji').textContent = '🏆'; 
   $('re-title').textContent = 'Game Over!'; 
   
-  /* Fixed Podium Text */
   const reWordP = document.getElementById('re-word');
   if(reWordP) reWordP.innerHTML = `Winner: <strong>${escHtml(winner.name)}</strong>`;
   
@@ -415,11 +407,14 @@ function endGame() {
 }
 
 /* ════════════════════════════════════════════
-   CANVAS DRAWING & FLOOD FILL RESTORED
+   CANVAS DRAWING & FLOOD FILL
 ════════════════════════════════════════════ */
 function initCanvas() {
-  resizeCanvas(); gameCanvas.addEventListener('pointerdown', onPointerDown); gameCanvas.addEventListener('pointermove', onPointerMove);
-  gameCanvas.addEventListener('pointerup', onPointerUp); gameCanvas.addEventListener('pointercancel', onPointerUp);
+  resizeCanvas(); 
+  gameCanvas.addEventListener('pointerdown', onPointerDown); 
+  gameCanvas.addEventListener('pointermove', onPointerMove);
+  gameCanvas.addEventListener('pointerup', onPointerUp); 
+  gameCanvas.addEventListener('pointercancel', onPointerUp);
 }
 function resizeCanvas() {
   const rect = canvasWrap.getBoundingClientRect(), W = Math.floor(rect.width), H = Math.floor(rect.height);
@@ -432,25 +427,41 @@ function getPointerXY(e) { const r = gameCanvas.getBoundingClientRect(); return 
 
 function onPointerDown(e) { 
   if (!S.isDrawer) return; 
-  gameCanvas.setPointerCapture(e.pointerId); 
+  try { gameCanvas.setPointerCapture(e.pointerId); } catch(err) {} // Bulletproof against mobile browser exceptions
   S.isDrawing = true; 
   const pos = getPointerXY(e); 
   
-  /* Restored Flood Fill Execution */
   if (S.tool === 'fill') {
     floodFill(pos.x, pos.y, S.color);
     S.isDrawing = false;
     return;
   }
   
-  ctx.beginPath(); ctx.moveTo(pos.x, pos.y); 
+  ctx.beginPath(); 
+  ctx.moveTo(pos.x, pos.y); 
   ctx.strokeStyle = S.tool === 'eraser' ? '#ffffff' : S.color; 
   ctx.lineWidth = S.tool === 'eraser' ? S.brushSize * 3 : S.brushSize; 
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
 }
-function onPointerMove(e) { if (!S.isDrawer || !S.isDrawing) return; const pos = getPointerXY(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); }
-function onPointerUp(e) { if (!S.isDrawer) return; gameCanvas.releasePointerCapture(e.pointerId); S.isDrawing = false; }
 
-/* Restored Flood Fill Logic */
+function onPointerMove(e) { 
+  if (!S.isDrawer || !S.isDrawing) return; 
+  const pos = getPointerXY(e); 
+  ctx.lineTo(pos.x, pos.y); 
+  ctx.stroke(); 
+  
+  /* Reset path to prevent memory lag */
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+}
+
+function onPointerUp(e) { 
+  if (!S.isDrawer) return; 
+  try { gameCanvas.releasePointerCapture(e.pointerId); } catch(err) {}
+  S.isDrawing = false; 
+}
+
 function floodFill(startX, startY, fillHex) {
   const w = gameCanvas.width, h = gameCanvas.height;
   const id = ctx.getImageData(0, 0, w, h), d = id.data;
@@ -479,20 +490,23 @@ function floodFill(startX, startY, fillHex) {
 
 function setupToolbar() {
   ['pencil','fill','eraser'].forEach(t => { 
-    if($('tool-' + t)) $('tool-' + t).addEventListener('click', () => { 
-      S.tool = t; 
-      gameCanvas.className = t === 'eraser' ? 'eraser' : ''; 
-      document.querySelectorAll('.tool-btn[data-tool]').forEach(b => b.classList.toggle('active', b.id === 'tool-' + t));
-    }); 
+    if($('tool-' + t)) {
+      $('tool-' + t).addEventListener('click', () => { 
+        S.tool = t; 
+        gameCanvas.className = t === 'eraser' ? 'eraser' : ''; 
+        document.querySelectorAll('.tool-btn[data-tool]').forEach(b => b.classList.toggle('active', b.id === 'tool-' + t));
+      }); 
+    }
   });
-  $('tool-clear').addEventListener('click', () => { ctx.fillStyle = 'white'; ctx.fillRect(0, 0, gameCanvas.width / S.dpr, gameCanvas.height / S.dpr); });
-  $('size-slider').addEventListener('input', e => { S.brushSize = +e.target.value; $('size-val-txt').textContent = S.brushSize + 'px'; });
   
+  if($('tool-undo')) $('tool-undo').addEventListener('click', () => { ctx.fillStyle = 'white'; ctx.fillRect(0, 0, gameCanvas.width / S.dpr, gameCanvas.height / S.dpr); });
+  if($('tool-clear')) $('tool-clear').addEventListener('click', () => { ctx.fillStyle = 'white'; ctx.fillRect(0, 0, gameCanvas.width / S.dpr, gameCanvas.height / S.dpr); });
+  
+  $('size-slider').addEventListener('input', e => { S.brushSize = +e.target.value; $('size-val-txt').textContent = S.brushSize + 'px'; });
   $('btn-color-popup').addEventListener('click', e => { e.stopPropagation(); $('popup-color').classList.toggle('hidden'); $('popup-size').classList.add('hidden'); });
   $('btn-size-popup').addEventListener('click', e => { e.stopPropagation(); $('popup-size').classList.toggle('hidden'); $('popup-color').classList.add('hidden'); });
   $('color-palette').innerHTML = COLORS.map(hex => `<div class="c-swatch ${hex===S.color?'active':''}" style="background:${hex}" onclick="S.color='${hex}'; document.getElementById('color-indicator').style.background='${hex}'; if(S.tool==='eraser'){ document.getElementById('tool-pencil').click(); }"></div>`).join('');
   
-  /* Popups Auto-Close Logic Restored */
   document.addEventListener('click', e => {
     const pColor = $('popup-color'), pSize = $('popup-size');
     if (pColor && !pColor.classList.contains('hidden') && !pColor.contains(e.target) && !$('btn-color-popup').contains(e.target)) pColor.classList.add('hidden');
@@ -539,7 +553,6 @@ $('btn-mute').addEventListener('click', () => {
   $('mute-icon').innerHTML = S.isMuted ? `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>` : `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>`;
 });
 
-/* Context Menu Logic Restored */
 function setupContextMenu() {
   document.addEventListener('click', e => { if (!contextMenu.contains(e.target)) contextMenu.classList.add('hidden'); });
   $('ctx-kick').addEventListener('click', () => { contextMenu.classList.add('hidden'); if (S.ctxTarget) showToast(`🗳️ Vote kick initiated for ${S.ctxTarget.name}`, 't-warn'); });
