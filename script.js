@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v4.5 (Unified Touch/Mouse Input Engine)
+   PICAZO — script.js  v4.6 (Added Play Again & Home Buttons)
 ================================================================ */
 'use strict';
 
@@ -365,6 +365,10 @@ function endRound(allGuessed = false) {
   clearInterval(S.timerInterval); BotManager.stop();
   addChat('system', '', `⏰ Round over! Word was: "${S.currentWord}"`);
   
+  // Ensure podium buttons are hidden during standard round breaks
+  const btnWrap = document.getElementById('podium-btns');
+  if (btnWrap) btnWrap.style.display = 'none';
+  
   if (S.guessedIds.size > 0 && S.players[S.drawerIdx]) {
     const bonus = Math.min(S.guessedIds.size * 30, 150);
     S.players[S.drawerIdx].score += bonus;
@@ -404,7 +408,60 @@ function endGame() {
   
   $('re-next').style.display = 'none';
   $('re-scores').innerHTML = [...S.players].sort((a, b) => b.score - a.score).map((p, i) => `<div class="re-score-row"><span class="re-score-name">${i===0?'🥇':i===1?'🥈':i===2?'🥉':''} ${escHtml(p.name)}</span><span class="re-score-pts">${p.score} pts</span></div>`).join('');
+  
+  // Dynamically Inject End Game Buttons
+  let btnWrap = document.getElementById('podium-btns');
+  if (!btnWrap) {
+    btnWrap = document.createElement('div');
+    btnWrap.id = 'podium-btns';
+    btnWrap.style.display = 'flex';
+    btnWrap.style.gap = '15px';
+    btnWrap.style.marginTop = '20px';
+    btnWrap.style.justifyContent = 'center';
+
+    const playBtn = document.createElement('button');
+    playBtn.textContent = '🔄 Play Again';
+    playBtn.style.cssText = "background: linear-gradient(135deg, #4acf8a, #2ecc87); color: white; padding: 12px 24px; border: none; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(46,204,135,0.4);";
+    playBtn.onclick = () => resetGame();
+
+    const homeBtn = document.createElement('button');
+    homeBtn.textContent = '🏠 Home';
+    homeBtn.style.cssText = "background: linear-gradient(135deg, #f0525e, #cc3333); color: white; padding: 12px 24px; border: none; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(240,82,94,0.4);";
+    homeBtn.onclick = () => location.reload(); // Drops right back to lobby
+
+    btnWrap.appendChild(playBtn);
+    btnWrap.appendChild(homeBtn);
+    
+    $('re-scores').parentElement.appendChild(btnWrap);
+  }
+  btnWrap.style.display = 'flex';
+  
   showEventPopup('🏆', `${winner.name} wins the game!`);
+}
+
+function resetGame() {
+  overlayRoundEnd.classList.add('hidden');
+  const btnWrap = document.getElementById('podium-btns');
+  if (btnWrap) btnWrap.style.display = 'none';
+
+  // Wipe Scores & Reset Variables
+  S.players.forEach(p => { p.score = 0; p.guessed = false; });
+  S.round = 1;
+  S.drawerIdx = 0;
+  S.isDrawer = S.players[S.drawerIdx].id === S.myId;
+  S.currentWord = '';
+  S.guessedIds.clear();
+  S.hintsFired = 0;
+
+  // Visual Reset
+  roundBadge.textContent = `Round ${S.round}/${S.totalRounds}`;
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+  chatMessages.innerHTML = '';
+  addChat('system', '', '🔄 New Game Started! Scores reset.');
+  
+  buildLeaderboard();
+  startWordSelection();
 }
 
 /* ════════════════════════════════════════════
@@ -412,14 +469,10 @@ function endGame() {
 ════════════════════════════════════════════ */
 function initCanvas() {
   resizeCanvas();
-  
-  // Touch Handlers (Passive: false ensures we can prevent default scrolling)
   gameCanvas.addEventListener('touchstart', onDrawStart, { passive: false });
   gameCanvas.addEventListener('touchmove', onDrawMove, { passive: false });
   gameCanvas.addEventListener('touchend', onDrawEnd);
   gameCanvas.addEventListener('touchcancel', onDrawEnd);
-  
-  // Mouse Handlers
   gameCanvas.addEventListener('mousedown', onDrawStart);
   window.addEventListener('mousemove', onDrawMove);
   window.addEventListener('mouseup', onDrawEnd);
@@ -460,7 +513,7 @@ function onDrawStart(e) {
 
   ctx.beginPath();
   ctx.moveTo(pos.x, pos.y);
-  ctx.lineTo(pos.x, pos.y); // Creates an instant dot on tap
+  ctx.lineTo(pos.x, pos.y);
   ctx.strokeStyle = S.tool === 'eraser' ? '#ffffff' : S.color;
   ctx.lineWidth = S.tool === 'eraser' ? S.brushSize * 3 : S.brushSize;
   ctx.lineCap = 'round';
@@ -475,7 +528,6 @@ function onDrawMove(e) {
   ctx.lineTo(pos.x, pos.y);
   ctx.stroke();
   
-  // Reset path to avoid massive performance drops on long strokes
   ctx.beginPath();
   ctx.moveTo(pos.x, pos.y);
 }
