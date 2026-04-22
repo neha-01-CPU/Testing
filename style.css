@@ -158,9 +158,9 @@ html, body {
 
 .lobby-tagline {
   font-family: var(--f-body);
-  font-size: 0.95rem;
+  font-size: 0.80rem;
   font-weight: 900;
-  text-transform: lowercase;
+  text-transform: uppercase;
   letter-spacing: 3.5px;
   margin-top: 8px;
   
