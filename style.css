@@ -1,4 +1,4 @@
-/* ================================================================
+UI/* ================================================================
    PICAZO — style.css  v3.0
    Glassmorphism · Fluid Animations · Mobile-First
 ================================================================ */
@@ -160,7 +160,7 @@ html, body {
   font-family: var(--f-body);
   font-size: 0.95rem;
   font-weight: 900;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 3.5px;
   margin-top: 8px;
   
