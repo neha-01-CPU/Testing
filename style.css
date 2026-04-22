@@ -145,32 +145,35 @@ html, body {
 
 .logo-text {
   font-family: var(--f-display);
-  font-size: 4.5rem;
-  letter-spacing: 4px;
-  color: #ffffff;
-  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  font-size: 5.6rem; /* Massively increased size */
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #4a8fe8 0%, #5c6ef8 40%, #db2777 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 6px 14px rgba(92, 110, 248, 0.4));
   line-height: 1;
 }
 
 .lobby-tagline {
-  font-family: var(--f-body);
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--txt-dark);
-  text-transform: uppercase;
-  letter-spacing: 6px;
-  margin-top: 8px;
-  opacity: 0.7;
+  font-family: var(--f-display); /* Switched to the playful, funny font */
+  font-size: 1.1rem; /* Reduced visual footprint */
+  font-weight: normal; 
+  text-transform: none; /* Removed all-caps so the fun font reads properly */
+  letter-spacing: 1.5px;
+  margin-top: 2px;
+  
+  /* Multi-colored gradient */
+  background: linear-gradient(to right, #4a8fe8, #2ecc87, #f4b942, #ec4899, #5c6ef8);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  /* Slowly moving gradient + glowing effect */
+  animation: gradientGlow 5s ease-in-out infinite;
 }
 
-
-
-
-
-@keyframes sharpGlow {
-  0%, 100% { text-shadow: 0 0 4px rgba(74,143,232,0.2); color: var(--txt-mid); }
-  50% { text-shadow: 0 0 15px rgba(92,110,248,0.9), 0 0 30px rgba(92,110,248,0.6); color: var(--indigo); }
-}
 
 .section-block {
   width: 100%;
