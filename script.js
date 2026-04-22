@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v4.6 (Added Play Again & Home Buttons)
+   PICAZO — script.js  v4.7 (Undo Fix & Liquid Glass Buttons)
 ================================================================ */
 'use strict';
 
@@ -48,7 +48,7 @@ let S = {
   players: [], myId: 'me', drawerIdx: 0, round: 1, currentWord: '', revealedIdx: [], guessedIds: new Set(), hintsFired: 0,
   timeLeft: 45, timerInterval: null, wsTimerInterval: null,
   isDrawing: false, tool: 'pencil', color: '#000000', brushSize: 3, strokes: [], isDrawer: false,
-  isMuted: false, ctxTarget: null, dpr: window.devicePixelRatio || 1
+  isMuted: false, ctxTarget: null, dpr: window.devicePixelRatio || 1, history: []
 };
 const CIRC = 2 * Math.PI * 25; 
 
@@ -332,6 +332,7 @@ function chooseWord(word) {
   S.currentWord = word; S.revealedIdx = []; renderWordBlanks(); startRoundTimer();
   addChat('system', '', `${S.players[S.drawerIdx].name} is drawing! 🖊️`);
   ctx.fillStyle = 'white'; ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+  S.history = []; // Clear undo memory for new round
   BotManager.startRound();
 }
 
@@ -365,7 +366,6 @@ function endRound(allGuessed = false) {
   clearInterval(S.timerInterval); BotManager.stop();
   addChat('system', '', `⏰ Round over! Word was: "${S.currentWord}"`);
   
-  // Ensure podium buttons are hidden during standard round breaks
   const btnWrap = document.getElementById('podium-btns');
   if (btnWrap) btnWrap.style.display = 'none';
   
@@ -396,6 +396,9 @@ function nextRound() {
   addChat('system', '', `🔄 Round ${S.round} — ${S.players[S.drawerIdx].name} draws!`); startWordSelection();
 }
 
+/* ════════════════════════════════════════════
+   END GAME & LIQUID BUTTON INJECTION
+════════════════════════════════════════════ */
 function endGame() {
   clearInterval(S.timerInterval); BotManager.stop();
   const winner = [...S.players].sort((a, b) => b.score - a.score)[0];
@@ -409,7 +412,8 @@ function endGame() {
   $('re-next').style.display = 'none';
   $('re-scores').innerHTML = [...S.players].sort((a, b) => b.score - a.score).map((p, i) => `<div class="re-score-row"><span class="re-score-name">${i===0?'🥇':i===1?'🥈':i===2?'🥉':''} ${escHtml(p.name)}</span><span class="re-score-pts">${p.score} pts</span></div>`).join('');
   
-  // Dynamically Inject End Game Buttons
+  injectGlassyStyles();
+
   let btnWrap = document.getElementById('podium-btns');
   if (!btnWrap) {
     btnWrap = document.createElement('div');
@@ -421,13 +425,13 @@ function endGame() {
 
     const playBtn = document.createElement('button');
     playBtn.textContent = '🔄 Play Again';
-    playBtn.style.cssText = "background: linear-gradient(135deg, #4acf8a, #2ecc87); color: white; padding: 12px 24px; border: none; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(46,204,135,0.4);";
+    playBtn.className = 'glass-fluid-btn play-btn';
     playBtn.onclick = () => resetGame();
 
     const homeBtn = document.createElement('button');
     homeBtn.textContent = '🏠 Home';
-    homeBtn.style.cssText = "background: linear-gradient(135deg, #f0525e, #cc3333); color: white; padding: 12px 24px; border: none; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(240,82,94,0.4);";
-    homeBtn.onclick = () => location.reload(); // Drops right back to lobby
+    homeBtn.className = 'glass-fluid-btn home-btn';
+    homeBtn.onclick = () => location.reload(); 
 
     btnWrap.appendChild(playBtn);
     btnWrap.appendChild(homeBtn);
@@ -439,24 +443,66 @@ function endGame() {
   showEventPopup('🏆', `${winner.name} wins the game!`);
 }
 
+function injectGlassyStyles() {
+  if (document.getElementById('podium-liquid-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'podium-liquid-styles';
+  style.textContent = `
+    .glass-fluid-btn {
+      position: relative;
+      overflow: hidden;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .glass-fluid-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: all 0.4s ease;
+    }
+    .glass-fluid-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+    .glass-fluid-btn:hover::before { left: 100%; }
+    .glass-fluid-btn:active { transform: translateY(1px); }
+    
+    .play-btn {
+      background: rgba(46, 204, 135, 0.65);
+      border: 1px solid rgba(46, 204, 135, 0.8);
+      box-shadow: 0 4px 15px rgba(46,204,135,0.3);
+    }
+    .play-btn:hover { box-shadow: 0 8px 25px rgba(46,204,135,0.4); }
+    
+    .home-btn {
+      background: rgba(240, 82, 94, 0.65);
+      border: 1px solid rgba(240, 82, 94, 0.8);
+      box-shadow: 0 4px 15px rgba(240,82,94,0.3);
+    }
+    .home-btn:hover { box-shadow: 0 8px 25px rgba(240,82,94,0.4); }
+  `;
+  document.head.appendChild(style);
+}
+
 function resetGame() {
   overlayRoundEnd.classList.add('hidden');
   const btnWrap = document.getElementById('podium-btns');
   if (btnWrap) btnWrap.style.display = 'none';
 
-  // Wipe Scores & Reset Variables
   S.players.forEach(p => { p.score = 0; p.guessed = false; });
-  S.round = 1;
-  S.drawerIdx = 0;
-  S.isDrawer = S.players[S.drawerIdx].id === S.myId;
-  S.currentWord = '';
-  S.guessedIds.clear();
-  S.hintsFired = 0;
+  S.round = 1; S.drawerIdx = 0; S.isDrawer = S.players[S.drawerIdx].id === S.myId;
+  S.currentWord = ''; S.guessedIds.clear(); S.hintsFired = 0; S.history = [];
 
-  // Visual Reset
   roundBadge.textContent = `Round ${S.round}/${S.totalRounds}`;
-  ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+  ctx.fillStyle = 'white'; ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
   chatMessages.innerHTML = '';
   addChat('system', '', '🔄 New Game Started! Scores reset.');
   
@@ -465,7 +511,7 @@ function resetGame() {
 }
 
 /* ════════════════════════════════════════════
-   CANVAS DRAWING (UNIFIED TOUCH & MOUSE)
+   CANVAS DRAWING (UNIFIED TOUCH & MOUSE) & UNDO
 ════════════════════════════════════════════ */
 function initCanvas() {
   resizeCanvas();
@@ -486,15 +532,19 @@ function resizeCanvas() {
   ctx.scale(S.dpr, S.dpr); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.fillStyle = 'white'; ctx.fillRect(0, 0, W, H);
 }
 
+function saveState() {
+  // Keep maximum 15 snapshots in memory to prevent lag on mobile
+  if (S.history.length > 15) S.history.shift();
+  S.history.push(ctx.getImageData(0, 0, gameCanvas.width, gameCanvas.height));
+}
+
 function getXY(e) {
   const r = gameCanvas.getBoundingClientRect();
   let cx = e.clientX, cy = e.clientY;
   if (e.touches && e.touches.length > 0) {
-    cx = e.touches[0].clientX;
-    cy = e.touches[0].clientY;
+    cx = e.touches[0].clientX; cy = e.touches[0].clientY;
   } else if (e.changedTouches && e.changedTouches.length > 0) {
-    cx = e.changedTouches[0].clientX;
-    cy = e.changedTouches[0].clientY;
+    cx = e.changedTouches[0].clientX; cy = e.changedTouches[0].clientY;
   }
   return { x: cx - r.left, y: cy - r.top };
 }
@@ -502,8 +552,12 @@ function getXY(e) {
 function onDrawStart(e) {
   if (e.type === 'touchstart') e.preventDefault();
   if (!S.isDrawer) return;
+  
   S.isDrawing = true;
   const pos = getXY(e);
+
+  // Take snapshot BEFORE altering the canvas
+  saveState();
 
   if (S.tool === 'fill') {
     floodFill(pos.x, pos.y, S.color);
@@ -575,8 +629,22 @@ function setupToolbar() {
     }
   });
   
-  if($('tool-undo')) $('tool-undo').addEventListener('click', () => { ctx.fillStyle = 'white'; ctx.fillRect(0, 0, gameCanvas.width / S.dpr, gameCanvas.height / S.dpr); });
-  if($('tool-clear')) $('tool-clear').addEventListener('click', () => { ctx.fillStyle = 'white'; ctx.fillRect(0, 0, gameCanvas.width / S.dpr, gameCanvas.height / S.dpr); });
+  if($('tool-undo')) $('tool-undo').addEventListener('click', () => {
+    // True Undo Logic
+    if (S.history.length > 0) {
+      const previousState = S.history.pop();
+      ctx.putImageData(previousState, 0, 0);
+    } else {
+      ctx.fillStyle = 'white'; 
+      ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+    }
+  });
+
+  if($('tool-clear')) $('tool-clear').addEventListener('click', () => { 
+    saveState(); // Save state so accidental clears can be undone
+    ctx.fillStyle = 'white'; 
+    ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height); 
+  });
   
   $('size-slider').addEventListener('input', e => { S.brushSize = +e.target.value; $('size-val-txt').textContent = S.brushSize + 'px'; });
   $('btn-color-popup').addEventListener('click', e => { e.stopPropagation(); $('popup-color').classList.toggle('hidden'); $('popup-size').classList.add('hidden'); });
