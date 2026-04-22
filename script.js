@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v4.8 (Floating Podium Buttons & Undo Fix)
+   PICAZO — script.js  v4.8 (Full-Screen Podium & Layout Fix)
 ================================================================ */
 'use strict';
 
@@ -53,7 +53,7 @@ let S = {
 const CIRC = 2 * Math.PI * 25; 
 
 /* ════════════════════════════════════════════
-   DOM REFS
+   DOM REFS & STRUCTURAL FIX
 ════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const screenLobby = $('screen-lobby'), screenGame = $('screen-game');
@@ -62,6 +62,15 @@ const playerList = $('player-list'), chatMessages = $('chat-messages'), chatInpu
 const gameCanvas = $('game-canvas'), canvasWrap = $('canvas-wrap'), ctx = gameCanvas.getContext('2d', { willReadFrequently: true });
 const overlayWordSelect = $('overlay-word-select'), overlayRoundEnd = $('overlay-round-end'), wsCards = $('ws-cards');
 const contextMenu = $('context-menu'), ctxName = $('ctx-name'), ctxPts = $('ctx-pts'), ctxAv = $('ctx-av');
+
+// STRUCTURAL FIX: Pluck the Round End overlay out of the canvas so it covers the whole screen
+if (overlayRoundEnd) {
+  document.body.appendChild(overlayRoundEnd);
+  overlayRoundEnd.style.position = 'fixed';
+  overlayRoundEnd.style.zIndex = '9999';
+  overlayRoundEnd.style.borderRadius = '0';
+  overlayRoundEnd.style.height = '100dvh'; // Ensures it covers mobile screens perfectly
+}
 
 /* ════════════════════════════════════════════
    BOT MANAGER
@@ -433,9 +442,9 @@ function endGame() {
     btnWrap.appendChild(playBtn);
     btnWrap.appendChild(homeBtn);
     
-    // Attach to the overlay container so it pops up FREELY outside the white card
-    $('overlay-round-end').appendChild(btnWrap);
-    $('overlay-round-end').style.flexDirection = 'column';
+    // Attach to the full-screen overlay container
+    overlayRoundEnd.appendChild(btnWrap);
+    overlayRoundEnd.style.flexDirection = 'column';
   }
   btnWrap.style.display = 'flex';
   
@@ -449,8 +458,10 @@ function injectGlassyStyles() {
   style.textContent = `
     .podium-btn-wrap {
       display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 15px;
-      margin-top: -18px; /* Slightly overlaps the card for a connected popup feel */
+      margin-top: 25px; /* Free floating below the card */
       z-index: 100;
       animation: popupIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
     }
@@ -546,7 +557,6 @@ function resizeCanvas() {
 }
 
 function saveState() {
-  // Keep maximum 15 snapshots in memory to prevent lag on mobile
   if (S.history.length > 15) S.history.shift();
   S.history.push(ctx.getImageData(0, 0, gameCanvas.width, gameCanvas.height));
 }
@@ -569,7 +579,6 @@ function onDrawStart(e) {
   S.isDrawing = true;
   const pos = getXY(e);
 
-  // Take snapshot BEFORE altering the canvas
   saveState();
 
   if (S.tool === 'fill') {
