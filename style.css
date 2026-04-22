@@ -145,33 +145,69 @@ html, body {
 
 .logo-text {
   font-family: var(--f-display);
-  font-size: 5.6rem; /* Massively increased size */
+  font-size: 5.6rem;
   letter-spacing: 2px;
-  background: linear-gradient(135deg, #4a8fe8 0%, #5c6ef8 40%, #db2777 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 6px 14px rgba(92, 110, 248, 0.4));
-  line-height: 1;
-}
-
-.lobby-tagline {
-  font-family: var(--f-display); /* Switched to the playful, funny font */
-  font-size: 1.1rem; /* Reduced visual footprint */
-  font-weight: normal; 
-  text-transform: none; /* Removed all-caps so the fun font reads properly */
-  letter-spacing: 1.5px;
-  margin-top: 2px;
   
-  /* Multi-colored gradient */
-  background: linear-gradient(to right, #4a8fe8, #2ecc87, #f4b942, #ec4899, #5c6ef8);
+  /* Extended gradient to loop seamlessly back to blue */
+  background: linear-gradient(135deg, #4a8fe8, #5c6ef8, #db2777, #4a8fe8);
   background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  line-height: 1;
   
-  /* Slowly moving gradient + glowing effect */
-  animation: gradientGlow 5s ease-in-out infinite;
+  /* Applies the moving gradient and glow */
+  animation: logoGlow 6s ease-in-out infinite;
+}
+
+.lobby-tagline {
+  font-family: var(--f-display);
+  font-size: 1.1rem;
+  font-weight: normal; 
+  text-transform: none;
+  letter-spacing: 1.5px;
+  margin-top: 2px;
+  
+  /* Extended multi-colored gradient for seamless looping */
+  background: linear-gradient(to right, #4a8fe8, #2ecc87, #f4b942, #ec4899, #5c6ef8, #4a8fe8);
+  background-size: 400% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  /* Slightly faster animation to contrast the main logo */
+  animation: taglineGlow 4.5s ease-in-out infinite;
+}
+
+/* ── The Animation Keyframes ── */
+@keyframes logoGlow {
+  0% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 8px rgba(74, 143, 232, 0.4)); /* Blue glow */
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: drop-shadow(0 0 20px rgba(219, 39, 119, 0.7)); /* Pink glow */
+  }
+  100% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 8px rgba(74, 143, 232, 0.4)); /* Blue glow */
+  }
+}
+
+@keyframes taglineGlow {
+  0% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 5px rgba(46, 204, 135, 0.4)); /* Green glow */
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: drop-shadow(0 0 15px rgba(92, 110, 248, 0.6)); /* Indigo glow */
+  }
+  100% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 5px rgba(46, 204, 135, 0.4)); /* Green glow */
+  }
 }
 
 
