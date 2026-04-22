@@ -145,25 +145,28 @@ html, body {
 
 .logo-text {
   font-family: var(--f-display);
-  font-size: 4.5rem;
-  letter-spacing: 1px;
-  background: linear-gradient(to right, #ff416c, #ff4b2b, #f7b733);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 6px 16px rgba(255, 75, 43, 0.3));
+  font-size: 4.4rem;
+  letter-spacing: 3px;
+  color: #ffffff;
+  text-shadow:
+    0 0 5px #ffffff,
+    0 0 10px #ffffff,
+    0 0 20px #2ecc87,
+    0 0 40px #2ecc87;
   line-height: 1;
 }
 
 .lobby-tagline {
   font-family: var(--f-body);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 900;
-  color: #ff4b2b;
+  color: #2ecc87;
   text-transform: uppercase;
-  letter-spacing: 4px;
-  margin-top: 10px;
+  letter-spacing: 5px;
+  margin-top: 12px;
+  text-shadow: 0 2px 8px rgba(46, 204, 135, 0.4);
 }
+
 
 
 
