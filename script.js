@@ -33,19 +33,40 @@ const WORD_BANK = [
 ];
 
 const PREMIUM_AVATARS = [
-  "https://api.dicebear.com/7.x/micah/svg?seed=P1&backgroundColor=b6e3f4", 
-  "https://api.dicebear.com/7.x/shapes/svg?seed=P2&backgroundColor=c0aede",
-  "https://api.dicebear.com/7.x/bottts/svg?seed=P3&backgroundColor=ffd5dc", 
-  "https://api.dicebear.com/7.x/micah/svg?seed=P4&backgroundColor=ffdfbf",
-  "https://api.dicebear.com/7.x/shapes/svg?seed=P5&backgroundColor=d1d4f9", 
-  "https://api.dicebear.com/7.x/micah/svg?seed=P6&backgroundColor=b6e3f4",
-  "https://api.dicebear.com/7.x/bottts/svg?seed=P7&backgroundColor=c0aede", 
-  "https://api.dicebear.com/7.x/shapes/svg?seed=P8&backgroundColor=ffd5dc",
-  "https://api.dicebear.com/7.x/micah/svg?seed=P9&backgroundColor=ffdfbf", 
-  "https://api.dicebear.com/7.x/bottts/svg?seed=P10&backgroundColor=b6e3f4",
-  "https://api.dicebear.com/7.x/shapes/svg?seed=P11&backgroundColor=d1d4f9", 
-  "https://api.dicebear.com/7.x/micah/svg?seed=P12&backgroundColor=c0aede"
+const PREMIUM_AVATARS = [
+  // Style 1: Micah (Clean, modern, minimalist humans)
+  "https://api.dicebear.com/7.x/micah/svg?seed=Liam&backgroundColor=b6e3f4",     // Male
+  "https://api.dicebear.com/7.x/micah/svg?seed=Olivia&backgroundColor=ffd5dc",   // Female
+  "https://api.dicebear.com/7.x/micah/svg?seed=Noah&backgroundColor=d1d4f9",     // Male
+  "https://api.dicebear.com/7.x/micah/svg?seed=Emma&backgroundColor=ffdfbf",     // Female
+  "https://api.dicebear.com/7.x/micah/svg?seed=Oliver&backgroundColor=c0aede",   // Male
+  "https://api.dicebear.com/7.x/micah/svg?seed=Ava&backgroundColor=b4e4c4",      // Female
+
+  // Style 2: Lorelei (Expressive, cute, big eyes)
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=James&backgroundColor=ffdfbf",  // Male
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=Isabella&backgroundColor=b6e3f4",// Female
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=William&backgroundColor=b4e4c4",// Male
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=Mia&backgroundColor=ffd5dc",    // Female
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=Benjamin&backgroundColor=d1d4f9",// Male
+  "https://api.dicebear.com/7.x/lorelei/svg?seed=Amelia&backgroundColor=c0aede", // Female
+
+  // Style 3: Adventurer (Detailed, playful, great hair)
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Lucas&backgroundColor=c0aede",// Male
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Harper&backgroundColor=ffdfbf",// Female
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Henry&backgroundColor=b6e3f4",// Male
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Evelyn&backgroundColor=d1d4f9",// Female
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Alexander&backgroundColor=ffd5dc",// Male
+  "https://api.dicebear.com/7.x/adventurer/svg?seed=Abigail&backgroundColor=b4e4c4",// Female
+
+  // Style 4: Avataaars (The classic flat-design standard)
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Daniel&backgroundColor=b4e4c4",// Male
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily&backgroundColor=c0aede",// Female
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Matthew&backgroundColor=ffdfbf",// Male
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Elizabeth&backgroundColor=b6e3f4",// Female
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Jackson&backgroundColor=d1d4f9",// Male
+  "https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia&backgroundColor=ffd5dc" // Female
 ];
+
 
 let S = {
   avatarIdx: 0, playerName: '', totalRounds: 3, drawTime: 45, maxPlayers: 8, hintsCount: 2, customWords: [],
