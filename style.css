@@ -145,25 +145,27 @@ html, body {
 
 .logo-text {
   font-family: var(--f-display);
-  font-size: 3.8rem;
-  letter-spacing: 3px;
-  background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 40%, #45B7D1 70%, #9b59b6 100%);
+  font-size: 4.2rem;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #2b4c7e 0%, #5c6ef8 50%, #a855f7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 3px 12px rgba(78, 205, 196, 0.4));
+  filter: drop-shadow(0 6px 16px rgba(92, 110, 248, 0.4));
   line-height: 1;
 }
 
 .lobby-tagline {
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: var(--txt-mid);
-  letter-spacing: 1.5px;
-  margin-top: 6px;
-  font-style: italic;
-  animation: sharpGlow 3s ease-in-out infinite;
+  font-family: var(--f-body);
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--indigo);
+  text-transform: uppercase; /* Makes it look very professional */
+  letter-spacing: 3.5px;     /* Wide cinematic spacing */
+  margin-top: 8px;
+  text-shadow: 0 4px 12px rgba(92, 110, 248, 0.3);
 }
+
 
 @keyframes sharpGlow {
   0%, 100% { text-shadow: 0 0 4px rgba(74,143,232,0.2); color: var(--txt-mid); }
