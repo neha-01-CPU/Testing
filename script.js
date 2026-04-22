@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v4.7 (Undo Fix & Liquid Glass Buttons)
+   PICAZO — script.js  v4.8 (Floating Podium Buttons & Undo Fix)
 ================================================================ */
 'use strict';
 
@@ -418,25 +418,24 @@ function endGame() {
   if (!btnWrap) {
     btnWrap = document.createElement('div');
     btnWrap.id = 'podium-btns';
-    btnWrap.style.display = 'flex';
-    btnWrap.style.gap = '15px';
-    btnWrap.style.marginTop = '20px';
-    btnWrap.style.justifyContent = 'center';
+    btnWrap.className = 'podium-btn-wrap';
 
     const playBtn = document.createElement('button');
-    playBtn.textContent = '🔄 Play Again';
+    playBtn.innerHTML = '<span>🔄 Play Again</span>';
     playBtn.className = 'glass-fluid-btn play-btn';
     playBtn.onclick = () => resetGame();
 
     const homeBtn = document.createElement('button');
-    homeBtn.textContent = '🏠 Home';
+    homeBtn.innerHTML = '<span>🏠 Home</span>';
     homeBtn.className = 'glass-fluid-btn home-btn';
     homeBtn.onclick = () => location.reload(); 
 
     btnWrap.appendChild(playBtn);
     btnWrap.appendChild(homeBtn);
     
-    $('re-scores').parentElement.appendChild(btnWrap);
+    // Attach to the overlay container so it pops up FREELY outside the white card
+    $('overlay-round-end').appendChild(btnWrap);
+    $('overlay-round-end').style.flexDirection = 'column';
   }
   btnWrap.style.display = 'flex';
   
@@ -448,46 +447,60 @@ function injectGlassyStyles() {
   const style = document.createElement('style');
   style.id = 'podium-liquid-styles';
   style.textContent = `
+    .podium-btn-wrap {
+      display: flex;
+      gap: 15px;
+      margin-top: -18px; /* Slightly overlaps the card for a connected popup feel */
+      z-index: 100;
+      animation: popupIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+    }
     .glass-fluid-btn {
       position: relative;
       overflow: hidden;
-      padding: 12px 24px;
-      border-radius: 12px;
+      padding: 14px 28px;
+      border-radius: 100px;
       font-family: 'Nunito', sans-serif;
-      font-weight: 800;
-      font-size: 16px;
+      font-weight: 900;
+      font-size: 1.05rem;
       color: white;
       cursor: pointer;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+    .glass-fluid-btn span {
+      position: relative;
+      z-index: 2;
     }
     .glass-fluid-btn::before {
       content: '';
       position: absolute;
       top: 0; left: -100%;
       width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
       transition: all 0.4s ease;
+      z-index: 1;
     }
-    .glass-fluid-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+    .glass-fluid-btn:hover { transform: translateY(-4px) scale(1.05); }
     .glass-fluid-btn:hover::before { left: 100%; }
-    .glass-fluid-btn:active { transform: translateY(1px); }
+    .glass-fluid-btn:active { transform: translateY(2px) scale(0.95); }
     
     .play-btn {
-      background: rgba(46, 204, 135, 0.65);
-      border: 1px solid rgba(46, 204, 135, 0.8);
-      box-shadow: 0 4px 15px rgba(46,204,135,0.3);
+      background: linear-gradient(135deg, rgba(46, 204, 135, 0.85), rgba(30, 180, 110, 0.95));
+      box-shadow: 0 8px 25px rgba(46,204,135,0.4), inset 0 2px 0 rgba(255,255,255,0.5);
     }
-    .play-btn:hover { box-shadow: 0 8px 25px rgba(46,204,135,0.4); }
+    .play-btn:hover { box-shadow: 0 12px 35px rgba(46,204,135,0.6), inset 0 2px 0 rgba(255,255,255,0.6); }
     
     .home-btn {
-      background: rgba(240, 82, 94, 0.65);
-      border: 1px solid rgba(240, 82, 94, 0.8);
-      box-shadow: 0 4px 15px rgba(240,82,94,0.3);
+      background: linear-gradient(135deg, rgba(240, 82, 94, 0.85), rgba(200, 40, 60, 0.95));
+      box-shadow: 0 8px 25px rgba(240,82,94,0.4), inset 0 2px 0 rgba(255,255,255,0.5);
     }
-    .home-btn:hover { box-shadow: 0 8px 25px rgba(240,82,94,0.4); }
+    .home-btn:hover { box-shadow: 0 12px 35px rgba(240,82,94,0.6), inset 0 2px 0 rgba(255,255,255,0.6); }
   `;
   document.head.appendChild(style);
 }
@@ -630,7 +643,6 @@ function setupToolbar() {
   });
   
   if($('tool-undo')) $('tool-undo').addEventListener('click', () => {
-    // True Undo Logic
     if (S.history.length > 0) {
       const previousState = S.history.pop();
       ctx.putImageData(previousState, 0, 0);
@@ -641,7 +653,7 @@ function setupToolbar() {
   });
 
   if($('tool-clear')) $('tool-clear').addEventListener('click', () => { 
-    saveState(); // Save state so accidental clears can be undone
+    saveState(); 
     ctx.fillStyle = 'white'; 
     ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height); 
   });
