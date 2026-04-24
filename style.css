@@ -57,6 +57,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
+
 /* ── DARK MODE (Midnight Glass) ── */
 [data-theme="dark"] {
   --blue:        #60a5fa;
@@ -91,14 +92,15 @@ html, body {
 [data-theme="dark"] .bg-blob.blob-3 { background: radial-gradient(circle, #064e3b, transparent 70%); }
 
 /* Component Overrides for Dark Mode */
-[data-theme="dark"] .canvas-wrap { background: #ffffff; } /* Canvas stays white for drawing! */
+[data-theme="dark"] .canvas-wrap { background: #ffffff; } /* Canvas stays white! */
 [data-theme="dark"] .toolbar-glass { background: rgba(30, 41, 59, 0.9) !important; }
 [data-theme="dark"] .toolbar-glass .tool-btn { background: rgba(15, 23, 42, 0.8) !important; color: #94a3b8 !important; border-color: rgba(255,255,255,0.1) !important; }
-[data-theme="dark"] .toolbar-glass .tool-btn.active { background: linear-gradient(135deg, var(--blue), var(--indigo)) !important; color: #fff !important; }
+[data-theme="dark"] .toolbar-glass .tool-btn.active { background: linear-gradient(135deg, var(--blue), var(--indigo)) !important; color: #fff !important; border-color: transparent !important; }
 [data-theme="dark"] .name-input, [data-theme="dark"] .setting-sel, [data-theme="dark"] .chat-form { background: rgba(15, 23, 42, 0.6); color: #fff; }
 [data-theme="dark"] .chat-input { color: #fff; }
 [data-theme="dark"] .player-item { background: rgba(30, 41, 59, 0.6); border-color: rgba(255,255,255,0.05); }
 [data-theme="dark"] .player-item:hover { background: rgba(30, 41, 59, 0.9); }
+
 /* ── Background Blobs ── */
 .bg-blob {
   position: fixed; border-radius: 50%;
@@ -188,16 +190,12 @@ html, body {
   font-family: var(--f-display);
   font-size: 5.6rem;
   letter-spacing: 2px;
-  
-  /* Extended gradient to loop seamlessly back to blue */
   background: linear-gradient(135deg, #4a8fe8, #5c6ef8, #db2777, #4a8fe8);
   background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   line-height: 1;
-  
-  /* Applies the moving gradient and glow */
   animation: logoGlow 6s ease-in-out infinite;
 }
 
@@ -208,49 +206,25 @@ html, body {
   text-transform: none;
   letter-spacing: 1.5px;
   margin-top: 2px;
-  
-  /* Extended multi-colored gradient for seamless looping */
   background: linear-gradient(to right, #4a8fe8, #2ecc87, #f4b942, #ec4899, #5c6ef8, #4a8fe8);
   background-size: 400% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  
-  /* Slightly faster animation to contrast the main logo */
   animation: taglineGlow 4.5s ease-in-out infinite;
 }
 
-/* ── The Animation Keyframes ── */
 @keyframes logoGlow {
-  0% {
-    background-position: 0% 50%;
-    filter: drop-shadow(0 0 8px rgba(74, 143, 232, 0.4)); /* Blue glow */
-  }
-  50% {
-    background-position: 100% 50%;
-    filter: drop-shadow(0 0 20px rgba(219, 39, 119, 0.7)); /* Pink glow */
-  }
-  100% {
-    background-position: 0% 50%;
-    filter: drop-shadow(0 0 8px rgba(74, 143, 232, 0.4)); /* Blue glow */
-  }
+  0% { background-position: 0% 50%; filter: drop-shadow(0 0 8px rgba(74, 143, 232, 0.4)); }
+  50% { background-position: 100% 50%; filter: drop-shadow(0 0 20px rgba(219, 39, 119, 0.7)); }
+  100% { background-position: 0% 50%; filter: drop-shadow(0 0 8px rgba(74, 143, 232, 0.4)); }
 }
 
 @keyframes taglineGlow {
-  0% {
-    background-position: 0% 50%;
-    filter: drop-shadow(0 0 5px rgba(46, 204, 135, 0.4)); /* Green glow */
-  }
-  50% {
-    background-position: 100% 50%;
-    filter: drop-shadow(0 0 15px rgba(92, 110, 248, 0.6)); /* Indigo glow */
-  }
-  100% {
-    background-position: 0% 50%;
-    filter: drop-shadow(0 0 5px rgba(46, 204, 135, 0.4)); /* Green glow */
-  }
+  0% { background-position: 0% 50%; filter: drop-shadow(0 0 5px rgba(46, 204, 135, 0.4)); }
+  50% { background-position: 100% 50%; filter: drop-shadow(0 0 15px rgba(92, 110, 248, 0.6)); }
+  100% { background-position: 0% 50%; filter: drop-shadow(0 0 5px rgba(46, 204, 135, 0.4)); }
 }
-
 
 .section-block {
   width: 100%;
@@ -685,18 +659,16 @@ html, body {
 .toolbar-glass .tool-btn {
   width: 40px; height: 40px; 
   border-radius: 10px;
-  /* Make them look like distinct physical buttons */
   border: 1px solid rgba(74,143,232,0.25); 
   background: #ffffff; 
-  color: #334155; /* Darker, high-contrast grey */
+  color: #334155; 
   cursor: pointer; 
   display: flex; align-items: center; justify-content: center;
   transition: var(--transition); 
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05); /* Soft drop shadow */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05); 
 }
 
-/* Thicker, bolder icons */
 .toolbar-glass .tool-btn svg { 
   width: 18px; 
   height: 18px; 
@@ -722,7 +694,7 @@ html, body {
 /* Distinctive Danger/Clear Button */
 .toolbar-glass .tool-btn.danger { 
   color: #e11d48; 
-  background: #fff1f2; /* Soft permanent red background */
+  background: #fff1f2; 
   border-color: rgba(225, 29, 72, 0.2);
 }
 .toolbar-glass .tool-btn.danger:hover { 
@@ -744,6 +716,7 @@ html, body {
   border: 2px solid #fff; 
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
+
 /* Popups Hovering Over Canvas */
 .popup-over-canvas {
   position: absolute;
@@ -1075,42 +1048,36 @@ html, body {
   .timer-num { font-size: 0.88rem; }
   .wb-char { font-size: 1.1rem; }
 
-  /* Game body takes all remaining height */
   .game-body { 
     flex: 1 1 100%; min-height: 0; gap: 6px; display: flex; 
     flex-direction: column; padding-bottom: 2px;
   }
 
-  /* INCREASED CANVAS AREA (60/40 Split instead of 50/50) */
   .canvas-col { 
     flex: 0 0 calc(60% - 3px); height: calc(60% - 3px); min-height: 0; order: 1; 
   }
   .canvas-wrap { flex: 1; height: 100%; }
 
-/* Toolbar container full width */
   .toolbar-container { 
     width: 100% !important; 
     display: flex !important; 
   }
 
-  /* Toolbar glass mobile updates */
   .toolbar-glass {
     width: 100% !important;
     padding: 6px 12px !important;
     border-radius: var(--radius-sm) !important;
-    justify-content: space-between !important; /* Spreads them perfectly on phone */
+    justify-content: space-between !important; 
   }
   .toolbar-glass::-webkit-scrollbar { display: none; }
   .toolbar-glass .tool-btn { width: 36px !important; height: 36px !important; flex-shrink: 0; }
   .toolbar-glass .tool-btn svg { width: 16px !important; height: 16px !important; }
 
-  /* Bottom row gets the remaining 40% */
   .bottom-mobile-row {
     flex: 0 0 calc(40% - 3px); height: calc(40% - 3px); min-height: 0; order: 2; display: flex; gap: 6px;
   }
   #leaderboard-panel, #chat-panel { width: 50%; height: 100%; flex: 1; min-height: 0; }
 
-  /* Full-width seamless pill at the bottom */
   .chat-form {
     order: 3; margin-top: auto;
     background: var(--glass-s);
@@ -1118,9 +1085,8 @@ html, body {
     -webkit-backdrop-filter: blur(28px) saturate(180%);
     box-shadow: var(--shadow);
   }
-  .chat-input { font-size: 16px; padding: 10px 18px; } /* Prevents iOS auto-zoom */
+  .chat-input { font-size: 16px; padding: 10px 18px; }
 
-  /* Private modal full-width on mobile */
   .modal-card { padding: 20px 16px; max-height: 95dvh; }
 }
 
@@ -1128,13 +1094,11 @@ html, body {
    DESKTOP LOCKDOWN (MAXIMIZE CANVAS & PANELS)
 ════════════════════════════════════════════ */
 @media (min-width: 768px) {
-  /* Force game screen to take exactly 100% of screen height */
   #screen-game.active {
     height: 100dvh !important;
     overflow: hidden;
   }
 
-  /* Force game body to stretch all the way down */
   .game-body { 
     flex: 1 1 100% !important;
     height: 100% !important; 
@@ -1143,7 +1107,6 @@ html, body {
     padding-bottom: 0 !important;
   }
   
-  /* Lock Leaderboard and force it to bottom */
   #leaderboard-panel { 
     order: 1 !important; 
     flex: 0 0 240px !important; 
@@ -1152,7 +1115,6 @@ html, body {
     height: 100% !important; 
   }
   
-  /* Stretch Canvas to fill all vertical space */
   .canvas-col { 
     order: 2 !important; 
     flex: 1 1 auto !important; 
@@ -1166,7 +1128,6 @@ html, body {
     height: 100% !important;
   }
   
-  /* Lock Chat and force it to bottom */
   #chat-panel { 
     order: 3 !important; 
     flex: 0 0 280px !important; 
@@ -1175,13 +1136,14 @@ html, body {
     height: 100% !important; 
   }
   
-  /* Desktop Chat Pill Fix */
   .chat-form {
     order: unset !important;
     margin-top: auto !important; 
     border-radius: var(--radius-pill) !important;
   }
-}/* ════════════════════════════════════════════
+}
+
+/* ════════════════════════════════════════════
    MISC ANIMATIONS
 ════════════════════════════════════════════ */
 @keyframes floatUp {
@@ -1194,42 +1156,4 @@ html, body {
   color: var(--green);
   text-shadow: 0 2px 8px rgba(46,204,135,0.5);
   animation: floatUp 1.2s var(--ease-out) forwards;
-   }
-  /* Exact vertical split layout adjusted to fit the new footer pill */
-  .canvas-col { 
-    flex: 0 0 calc(50% - 32px); height: calc(50% - 32px); min-height: 0; order: 1; 
-  }
-  .canvas-wrap { flex: 1; }
-
-  /* Toolbar container full width to center it */
-  .toolbar-container { width: 100%; display: flex; justify-content: center; }
-
-  /* Toolbar glass mobile updates */
-  .toolbar-glass {
-    gap: 5px; padding: 6px 8px; overflow-x: auto;
-    -webkit-overflow-scrolling: touch; justify-content: flex-start; scrollbar-width: none;
-  }
-  .toolbar-glass::-webkit-scrollbar { display: none; }
-  .toolbar-glass .tool-btn { width: 34px; height: 34px; flex-shrink: 0; }
-  .toolbar-glass .tool-btn svg { width: 15px; height: 15px; }
-
-  /* Bottom exact vertical split adjusted for the pill */
-  .bottom-mobile-row {
-    flex: 0 0 calc(50% - 32px); height: calc(50% - 32px); min-height: 0; order: 2; display: flex; gap: 6px;
-  }
-  #leaderboard-panel, #chat-panel { width: 50%; height: 100%; flex: 1; min-height: 0; }
-
-  /* Full-width seamless pill at the bottom */
-  .chat-form {
-    order: 3; /* Locks it to the absolute bottom */
-    margin-top: 2px;
-    background: var(--glass-s);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    box-shadow: var(--shadow);
-  }
-  .chat-input { font-size: 16px; padding: 10px 18px; } /* 16px prevents iOS zoom */
-
-  /* Private modal full-width on mobile */
-  .modal-card { padding: 20px 16px; max-height: 95dvh; }
-
+}
