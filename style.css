@@ -1043,55 +1043,48 @@ html, body {
 }
 
 /* ════════════════════════════════════════════
-   DESKTOP — WIDE SCREENS (>= 768px)
+   DESKTOP LOCKDOWN (FIX SQUISHED PANELS)
 ════════════════════════════════════════════ */
 @media (min-width: 768px) {
-  /* 1. Force strict row layout & remove mobile buffer */
+  /* Force a strict Row layout for Desktop */
   .game-body { 
     flex-direction: row !important; 
     align-items: stretch !important; 
     padding-bottom: 0 !important;
   }
   
-  /* 2. Lock Leaderboard to Left */
+  /* UN-SQUISHABLE LEADERBOARD */
   #leaderboard-panel { 
     order: 1 !important; 
+    flex: 0 0 240px !important; /* This strictly locks the width */
     width: 240px !important; 
-    height: 100% !important;
-    flex-shrink: 0; 
+    max-width: 240px !important;
+    height: auto !important;
   }
   
-  /* 3. Force Canvas to stretch completely in the middle */
+  /* STRETCHY CANVAS */
   .canvas-col { 
     order: 2 !important; 
     flex: 1 1 auto !important; 
-    height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: stretch !important;
-  }
-  .canvas-wrap {
-    flex: 1 1 auto !important;
-    height: 100% !important;
-    min-height: 400px;
+    min-width: 400px !important;
   }
   
-  /* 4. Lock Chat to Right */
+  /* UN-SQUISHABLE CHAT */
   #chat-panel { 
     order: 3 !important; 
+    flex: 0 0 280px !important; /* This strictly locks the width */
     width: 280px !important; 
-    height: 100% !important;
-    flex-shrink: 0; 
+    max-width: 280px !important;
+    height: auto !important;
   }
   
-  /* 5. Keep the chat input looking like a premium pill on desktop */
+  /* Desktop Chat Pill Fix */
   .chat-form {
+    order: unset !important;
     margin-top: auto !important; 
     border-radius: var(--radius-pill) !important;
-    order: unset !important;
   }
 }
-
 /* ════════════════════════════════════════════
    MISC ANIMATIONS
 ════════════════════════════════════════════ */
