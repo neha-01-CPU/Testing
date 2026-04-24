@@ -627,10 +627,10 @@ html, body {
 
 .toolbar-glass {
   display: flex !important;
-  width: 100% !important; /* Force it to stretch */
+  width: 100% !important; 
   align-items: center !important;
-  justify-content: space-between !important; /* Forces tools to spread out */
-  padding: 8px 20px !important;
+  justify-content: space-between !important; 
+  padding: 8px 16px !important;
   border-radius: var(--radius-md) !important;
   background: rgba(255, 255, 255, 0.85) !important;
   backdrop-filter: blur(28px) saturate(200%) !important;
@@ -640,39 +640,68 @@ html, body {
   min-height: 56px !important;
 }
 
+/* Upgraded Tool Buttons for High Visibility */
 .toolbar-glass .tool-btn {
-  width: 40px; height: 40px; border-radius: 10px;
-  border: none; background: transparent;
-  color: var(--txt-mid); cursor: pointer;
+  width: 40px; height: 40px; 
+  border-radius: 10px;
+  /* Make them look like distinct physical buttons */
+  border: 1px solid rgba(74,143,232,0.25); 
+  background: #ffffff; 
+  color: #334155; /* Darker, high-contrast grey */
+  cursor: pointer; 
   display: flex; align-items: center; justify-content: center;
-  transition: var(--transition); flex-shrink: 0;
+  transition: var(--transition); 
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05); /* Soft drop shadow */
 }
-.toolbar-glass .tool-btn svg { width: 18px; height: 18px; }
+
+/* Thicker, bolder icons */
+.toolbar-glass .tool-btn svg { 
+  width: 18px; 
+  height: 18px; 
+  stroke-width: 2.2px; 
+}
 
 .toolbar-glass .tool-btn:hover { 
-  background: rgba(74,143,232,0.1); 
+  background: #f0f4f8; 
   color: var(--indigo); 
   transform: translateY(-2px) scale(1.05); 
+  border-color: var(--blue-light);
 }
+
 .toolbar-glass .tool-btn:active { transform: scale(0.92); }
 
 .toolbar-glass .tool-btn.active {
   background: linear-gradient(135deg, var(--blue), var(--indigo));
-  color: #fff; box-shadow: 0 4px 14px var(--indigo-glow);
+  color: #fff; 
+  border-color: transparent;
+  box-shadow: 0 4px 14px var(--indigo-glow);
 }
 
-.toolbar-glass .tool-btn.danger { color: var(--red); }
-.toolbar-glass .tool-btn.danger:hover { color: #fff; background: var(--red); }
+/* Distinctive Danger/Clear Button */
+.toolbar-glass .tool-btn.danger { 
+  color: #e11d48; 
+  background: #fff1f2; /* Soft permanent red background */
+  border-color: rgba(225, 29, 72, 0.2);
+}
+.toolbar-glass .tool-btn.danger:hover { 
+  color: #fff; 
+  background: var(--red); 
+}
 
 .tool-divider {
   width: 2px; height: 24px; 
-  background: rgba(74,143,232,0.2); 
+  background: rgba(74,143,232,0.25); 
   border-radius: 2px; flex-shrink: 0;
 }
-.color-btn { padding: 0; }
+
+.color-btn { padding: 0; background: transparent; border: none; box-shadow: none; }
+.color-btn:hover { background: transparent; border-color: transparent; transform: scale(1.1); }
+
 .color-indicator-ring {
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid #fff; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 /* Popups Hovering Over Canvas */
 .popup-over-canvas {
