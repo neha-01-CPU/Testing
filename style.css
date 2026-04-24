@@ -1006,16 +1006,17 @@ html, body {
   .timer-num { font-size: 0.88rem; }
   .wb-char { font-size: 1.1rem; }
 
-  /* Game body becomes column */
+  /* Game body takes all remaining height */
   .game-body { 
-    flex-direction: column; flex: 1; min-height: 0; gap: 6px; display: flex; 
+    flex: 1 1 100%; min-height: 0; gap: 6px; display: flex; 
+    flex-direction: column; padding-bottom: 2px;
   }
 
-  /* Exact 50/50 vertical split layout */
+  /* INCREASED CANVAS AREA (60/40 Split instead of 50/50) */
   .canvas-col { 
-    flex: 0 0 calc(50% - 3px); height: calc(50% - 3px); min-height: 0; order: 1; 
+    flex: 0 0 calc(60% - 3px); height: calc(60% - 3px); min-height: 0; order: 1; 
   }
-  .canvas-wrap { flex: 1; }
+  .canvas-wrap { flex: 1; height: 100%; }
 
   /* Toolbar container full width to center it */
   .toolbar-container { width: 100%; display: flex; justify-content: center; }
@@ -1029,53 +1030,75 @@ html, body {
   .toolbar-glass .tool-btn { width: 34px; height: 34px; flex-shrink: 0; }
   .toolbar-glass .tool-btn svg { width: 15px; height: 15px; }
 
-  /* Bottom exact 50% vertical split */
+  /* Bottom row gets the remaining 40% */
   .bottom-mobile-row {
-    flex: 0 0 calc(50% - 3px); height: calc(50% - 3px); min-height: 0; order: 2; display: flex; gap: 6px;
+    flex: 0 0 calc(40% - 3px); height: calc(40% - 3px); min-height: 0; order: 2; display: flex; gap: 6px;
   }
   #leaderboard-panel, #chat-panel { width: 50%; height: 100%; flex: 1; min-height: 0; }
 
-  /* Prevent page scroll when input focused */
-  .chat-input { font-size: 16px; }
+  /* Full-width seamless pill at the bottom */
+  .chat-form {
+    order: 3; margin-top: auto;
+    background: var(--glass-s);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    box-shadow: var(--shadow);
+  }
+  .chat-input { font-size: 16px; padding: 10px 18px; } /* Prevents iOS auto-zoom */
 
   /* Private modal full-width on mobile */
   .modal-card { padding: 20px 16px; max-height: 95dvh; }
 }
 
 /* ════════════════════════════════════════════
-   DESKTOP LOCKDOWN (FIX SQUISHED PANELS)
+   DESKTOP LOCKDOWN (MAXIMIZE CANVAS & PANELS)
 ════════════════════════════════════════════ */
 @media (min-width: 768px) {
-  /* Force a strict Row layout for Desktop */
+  /* Force game screen to take exactly 100% of screen height */
+  #screen-game.active {
+    height: 100dvh !important;
+    overflow: hidden;
+  }
+
+  /* Force game body to stretch all the way down */
   .game-body { 
+    flex: 1 1 100% !important;
+    height: 100% !important; 
     flex-direction: row !important; 
     align-items: stretch !important; 
     padding-bottom: 0 !important;
   }
   
-  /* UN-SQUISHABLE LEADERBOARD */
+  /* Lock Leaderboard and force it to bottom */
   #leaderboard-panel { 
     order: 1 !important; 
-    flex: 0 0 240px !important; /* This strictly locks the width */
+    flex: 0 0 240px !important; 
     width: 240px !important; 
     max-width: 240px !important;
-    height: auto !important;
+    height: 100% !important; 
   }
   
-  /* STRETCHY CANVAS */
+  /* Stretch Canvas to fill all vertical space */
   .canvas-col { 
     order: 2 !important; 
     flex: 1 1 auto !important; 
     min-width: 400px !important;
+    height: 100% !important; 
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .canvas-wrap {
+    flex: 1 1 100% !important; 
+    height: 100% !important;
   }
   
-  /* UN-SQUISHABLE CHAT */
+  /* Lock Chat and force it to bottom */
   #chat-panel { 
     order: 3 !important; 
-    flex: 0 0 280px !important; /* This strictly locks the width */
+    flex: 0 0 280px !important; 
     width: 280px !important; 
     max-width: 280px !important;
-    height: auto !important;
+    height: 100% !important; 
   }
   
   /* Desktop Chat Pill Fix */
@@ -1084,8 +1107,7 @@ html, body {
     margin-top: auto !important; 
     border-radius: var(--radius-pill) !important;
   }
-}
-/* ════════════════════════════════════════════
+}/* ════════════════════════════════════════════
    MISC ANIMATIONS
 ════════════════════════════════════════════ */
 @keyframes floatUp {
