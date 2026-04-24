@@ -1042,9 +1042,42 @@ html, body {
   .modal-card { padding: 20px 16px; max-height: 95dvh; }
 }
 
+/* ════════════════════════════════════════════
+   DESKTOP — WIDE SCREENS (>= 768px)
+════════════════════════════════════════════ */
 @media (min-width: 768px) {
-  #leaderboard-panel { width: 175px; }
-  #chat-panel { width: 210px; }
+  /* Force a strict Row layout for Desktop */
+  .game-body { 
+    flex-direction: row !important; 
+    align-items: stretch; 
+  }
+  
+  /* Lock Leaderboard to Left */
+  #leaderboard-panel { 
+    order: 1 !important; 
+    width: 220px !important; 
+    flex-shrink: 0; 
+  }
+  
+  /* Lock Canvas to Center */
+  .canvas-col { 
+    order: 2 !important; 
+    flex: 1 !important; 
+    min-width: 0; 
+  }
+  
+  /* Lock Chat to Right */
+  #chat-panel { 
+    order: 3 !important; 
+    width: 260px !important; 
+    flex-shrink: 0; 
+  }
+  
+  /* Keep the chat input looking like a premium pill on desktop */
+  .chat-form {
+    margin-top: auto; 
+    border-radius: var(--radius-pill) !important;
+  }
 }
 
 /* ════════════════════════════════════════════
