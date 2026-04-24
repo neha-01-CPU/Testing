@@ -770,7 +770,33 @@ function addChat(type, name, text) {
   div.innerHTML = type === 'system' ? `<span class="msg-text">${escHtml(text)}</span>` : `<span class="msg-name">${escHtml(name)}:</span> <span class="msg-text">${escHtml(text)}</span>`;
   chatMessages.appendChild(div); chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+/* ── THEME TOGGLE (Dark Mode) ── */
+const btnTheme = $('btn-theme');
+const themeIcon = $('theme-icon');
 
+// Check saved theme on load
+if (localStorage.getItem('picazo-theme') === 'dark') {
+  enableDarkMode();
+}
+
+btnTheme.addEventListener('click', () => {
+  if (document.body.getAttribute('data-theme') === 'dark') disableDarkMode();
+  else enableDarkMode();
+});
+
+function enableDarkMode() {
+  document.body.setAttribute('data-theme', 'dark');
+  localStorage.setItem('picazo-theme', 'dark');
+  // Switch icon to Sun
+  themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+}
+
+function disableDarkMode() {
+  document.body.removeAttribute('data-theme');
+  localStorage.setItem('picazo-theme', 'light');
+  // Switch icon to Moon
+  themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+}
 $('btn-mute').addEventListener('click', () => {
   S.isMuted = !S.isMuted;
   $('mute-icon').innerHTML = S.isMuted ? `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>` : `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>`;
