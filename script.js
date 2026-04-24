@@ -80,13 +80,20 @@ const overlayWordSelect = $('overlay-word-select'), overlayRoundEnd = $('overlay
 const contextMenu = $('context-menu'), ctxName = $('ctx-name'), ctxPts = $('ctx-pts'), ctxAv = $('ctx-av');
 const avImg = $('av-img'); 
 
-if (overlayRoundEnd) {
-  document.body.appendChild(overlayRoundEnd);
-  overlayRoundEnd.style.position = 'fixed';
-  overlayRoundEnd.style.zIndex = '9999';
-  overlayRoundEnd.style.borderRadius = '0';
-  overlayRoundEnd.style.height = '100dvh';
-}
+// STRUCTURAL FIX: Pluck ALL overlays out of the canvas so they cover the whole screen
+const overlays = [$('overlay-waiting'), $('overlay-word-select'), $('overlay-round-end')];
+overlays.forEach(overlay => {
+  if (overlay) {
+    document.body.appendChild(overlay);
+    overlay.style.position = 'fixed';
+    overlay.style.zIndex = '9999';
+    overlay.style.borderRadius = '0';
+    overlay.style.height = '100dvh';
+    overlay.style.width = '100vw';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+  }
+});
 
 /* ════════════════════════════════════════════
    BOT MANAGER
