@@ -619,24 +619,25 @@ html, body {
 
 /* ── TOOLBAR (Full-Width Edge-to-Edge) ── */
 .toolbar-container {
-  display: flex;
-  width: 100%;
-  flex-shrink: 0;
+  display: flex !important;
+  width: 100% !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
 }
 
 .toolbar-glass {
-  width: 100%; /* Forces the background to stretch all the way across */
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Spreads the tools evenly from left to right */
-  padding: 8px 16px;
-  border-radius: var(--radius-md); /* Matches the corners of the canvas */
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
-  border: 1.5px solid rgba(74,143,232,0.22);
-  box-shadow: var(--shadow);
-  min-height: 52px;
+  display: flex !important;
+  width: 100% !important; /* Force it to stretch */
+  align-items: center !important;
+  justify-content: space-between !important; /* Forces tools to spread out */
+  padding: 8px 20px !important;
+  border-radius: var(--radius-md) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: 1.5px solid rgba(74,143,232,0.22) !important;
+  box-shadow: var(--shadow) !important;
+  min-height: 56px !important;
 }
 
 .toolbar-glass .tool-btn {
@@ -1016,19 +1017,22 @@ html, body {
   }
   .canvas-wrap { flex: 1; height: 100%; }
 
- /* Toolbar container full width */
-  .toolbar-container { width: 100%; display: flex; }
+/* Toolbar container full width */
+  .toolbar-container { 
+    width: 100% !important; 
+    display: flex !important; 
+  }
 
   /* Toolbar glass mobile updates */
   .toolbar-glass {
-    width: 100%;
-    padding: 6px 10px;
-    border-radius: var(--radius-sm);
-    justify-content: space-between; /* Crucial: Spreads them out on mobile */
+    width: 100% !important;
+    padding: 6px 12px !important;
+    border-radius: var(--radius-sm) !important;
+    justify-content: space-between !important; /* Spreads them perfectly on phone */
   }
   .toolbar-glass::-webkit-scrollbar { display: none; }
-  .toolbar-glass .tool-btn { width: 36px; height: 36px; flex-shrink: 0; }
-  .toolbar-glass .tool-btn svg { width: 16px; height: 16px; }
+  .toolbar-glass .tool-btn { width: 36px !important; height: 36px !important; flex-shrink: 0; }
+  .toolbar-glass .tool-btn svg { width: 16px !important; height: 16px !important; }
 
   /* Bottom row gets the remaining 40% */
   .bottom-mobile-row {
