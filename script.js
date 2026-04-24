@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v5.1 (Premium Avatars & Sync Fix)
+   PICAZO — script.js  v5.2 (Floating Chat Pill Engine)
 ================================================================ */
 'use strict';
 
@@ -33,31 +33,24 @@ const WORD_BANK = [
 ];
 
 const PREMIUM_AVATARS = [
-  // Style 1: Micah (Clean, modern, minimalist humans)
   "https://api.dicebear.com/7.x/micah/svg?seed=Liam&backgroundColor=b6e3f4",     
   "https://api.dicebear.com/7.x/micah/svg?seed=Olivia&backgroundColor=ffd5dc",   
   "https://api.dicebear.com/7.x/micah/svg?seed=Noah&backgroundColor=d1d4f9",     
   "https://api.dicebear.com/7.x/micah/svg?seed=Emma&backgroundColor=ffdfbf",     
   "https://api.dicebear.com/7.x/micah/svg?seed=Oliver&backgroundColor=c0aede",   
   "https://api.dicebear.com/7.x/micah/svg?seed=Ava&backgroundColor=b4e4c4",      
-
-  // Style 2: Lorelei (Expressive, cute)
   "https://api.dicebear.com/7.x/lorelei/svg?seed=James&backgroundColor=ffdfbf",  
   "https://api.dicebear.com/7.x/lorelei/svg?seed=Isabella&backgroundColor=b6e3f4",
   "https://api.dicebear.com/7.x/lorelei/svg?seed=William&backgroundColor=b4e4c4",
   "https://api.dicebear.com/7.x/lorelei/svg?seed=Mia&backgroundColor=ffd5dc",    
   "https://api.dicebear.com/7.x/lorelei/svg?seed=Benjamin&backgroundColor=d1d4f9",
   "https://api.dicebear.com/7.x/lorelei/svg?seed=Amelia&backgroundColor=c0aede", 
-
-  // Style 3: Adventurer (Detailed, playful)
   "https://api.dicebear.com/7.x/adventurer/svg?seed=Lucas&backgroundColor=c0aede",
   "https://api.dicebear.com/7.x/adventurer/svg?seed=Harper&backgroundColor=ffdfbf",
   "https://api.dicebear.com/7.x/adventurer/svg?seed=Henry&backgroundColor=b6e3f4",
   "https://api.dicebear.com/7.x/adventurer/svg?seed=Evelyn&backgroundColor=d1d4f9",
   "https://api.dicebear.com/7.x/adventurer/svg?seed=Alexander&backgroundColor=ffd5dc",
   "https://api.dicebear.com/7.x/adventurer/svg?seed=Abigail&backgroundColor=b4e4c4",
-
-  // Style 4: Avataaars (Classic flat-design standard)
   "https://api.dicebear.com/7.x/avataaars/svg?seed=Daniel&backgroundColor=b4e4c4",
   "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily&backgroundColor=c0aede",
   "https://api.dicebear.com/7.x/avataaars/svg?seed=Matthew&backgroundColor=ffdfbf",
@@ -85,7 +78,7 @@ const playerList = $('player-list'), chatMessages = $('chat-messages'), chatInpu
 const gameCanvas = $('game-canvas'), canvasWrap = $('canvas-wrap'), ctx = gameCanvas.getContext('2d', { willReadFrequently: true });
 const overlayWordSelect = $('overlay-word-select'), overlayRoundEnd = $('overlay-round-end'), wsCards = $('ws-cards');
 const contextMenu = $('context-menu'), ctxName = $('ctx-name'), ctxPts = $('ctx-pts'), ctxAv = $('ctx-av');
-const avImg = $('av-img'); // Fixed target for Lobby Avatar
+const avImg = $('av-img'); 
 
 if (overlayRoundEnd) {
   document.body.appendChild(overlayRoundEnd);
@@ -160,13 +153,11 @@ const BotManager = {
 };
 
 /* ════════════════════════════════════════════
-   LOBBY & PRIVATE ROOM (IMAGE FIX)
+   LOBBY & PRIVATE ROOM
 ════════════════════════════════════════════ */
 function setAvatar(i) {
   S.avatarIdx = ((i % PREMIUM_AVATARS.length) + PREMIUM_AVATARS.length) % PREMIUM_AVATARS.length;
-  
   if(avImg) avImg.src = PREMIUM_AVATARS[S.avatarIdx];
-  
   $('av-dots').innerHTML = '';
   PREMIUM_AVATARS.forEach((_, j) => {
     const d = document.createElement('button'); d.className = 'av-dot' + (j === S.avatarIdx ? ' active' : '');
@@ -213,22 +204,47 @@ function transitionToGame() {
   setTimeout(() => { screenLobby.classList.remove('active'); screenLobby.style.display = 'none'; screenGame.classList.add('active'); setupMobileLayout(); initGame(); }, 420);
 }
 
+/* ════════════════════════════════════════════
+   MOBILE LAYOUT (WITH GLOBAL PILL INPUT)
+════════════════════════════════════════════ */
 function setupMobileLayout() {
-  const isMobile = window.innerWidth < 768, gameBody = document.querySelector('.game-body');
-  const lb = $('leaderboard-panel'), chat = $('chat-panel');
+  const isMobile = window.innerWidth < 768;
+  const gameBody = document.querySelector('.game-body');
+  const lb = $('leaderboard-panel');
+  const chat = $('chat-panel');
+  const chatForm = document.querySelector('.chat-form');
   let bottomRow = document.querySelector('.bottom-mobile-row');
+
   if (isMobile) {
-    if (!bottomRow) { bottomRow = document.createElement('div'); bottomRow.className = 'bottom-mobile-row'; }
+    if (!bottomRow) {
+      bottomRow = document.createElement('div');
+      bottomRow.className = 'bottom-mobile-row';
+    }
     if (!bottomRow.contains(lb)) bottomRow.appendChild(lb);
     if (!bottomRow.contains(chat)) bottomRow.appendChild(chat);
     if (!gameBody.contains(bottomRow)) gameBody.appendChild(bottomRow);
+
+    // Extract the chat form to act as a seamless global footer pill
+    if (chatForm && chatForm.parentNode !== gameBody) {
+      gameBody.appendChild(chatForm);
+    }
+  } else {
+    if (bottomRow) {
+      if (lb.parentNode === bottomRow) gameBody.insertBefore(lb, gameBody.firstChild);
+      if (chat.parentNode === bottomRow) gameBody.appendChild(chat);
+      bottomRow.remove();
+    }
+    // Put the chat form safely back inside the chat panel on desktop
+    if (chatForm && chatForm.parentNode !== chat) {
+      chat.appendChild(chatForm);
+    }
   }
   setTimeout(resizeCanvas, 50);
 }
 window.addEventListener('resize', () => { setupMobileLayout(); resizeCanvas(); });
 
 /* ════════════════════════════════════════════
-   GAME INIT & LEADERBOARD (IMAGE FIX)
+   GAME INIT & LEADERBOARD 
 ════════════════════════════════════════════ */
 function initGame() {
   S.players = [{ id: S.myId, name: S.playerName, avatarDef: PREMIUM_AVATARS[S.avatarIdx], score: 0, isSelf: true, guessed: false }];
@@ -259,7 +275,6 @@ function buildLeaderboard() {
     li.className = 'player-item' + (isDrawer ? ' is-drawing' : '') + (p.guessed ? ' guessed' : '');
     const rankClass = rank === 0 ? 'gold' : rank === 1 ? 'silver' : rank === 2 ? 'bronze' : '';
     
-    // Inject Image directly instead of Canvas
     const avWrap = document.createElement('div'); 
     avWrap.className = 'pi-av';
     const avImgList = document.createElement('img');
@@ -730,7 +745,6 @@ function openContextMenu(e, player) {
   e.stopPropagation(); S.ctxTarget = player;
   ctxName.textContent = player.name; ctxPts.textContent = player.score + ' pts';
   
-  // Inject the image into the context menu safely
   ctxAv.innerHTML = ''; 
   const img = document.createElement('img'); 
   img.src = player.avatarDef; 
