@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v5.2 (Floating Chat Pill Engine)
+   PICAZO — script.js  v5.3 (Indestructible Layout & Overlays)
 ================================================================ */
 'use strict';
 
@@ -69,7 +69,7 @@ let S = {
 const CIRC = 2 * Math.PI * 25; 
 
 /* ════════════════════════════════════════════
-   DOM REFS & STRUCTURAL FIX
+   DOM REFS & INITIALIZATION
 ════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const screenLobby = $('screen-lobby'), screenGame = $('screen-game');
@@ -80,19 +80,23 @@ const overlayWordSelect = $('overlay-word-select'), overlayRoundEnd = $('overlay
 const contextMenu = $('context-menu'), ctxName = $('ctx-name'), ctxPts = $('ctx-pts'), ctxAv = $('ctx-av');
 const avImg = $('av-img'); 
 
-// STRUCTURAL FIX: Pluck ALL overlays out of the canvas so they cover the whole screen
-const overlays = [$('overlay-waiting'), $('overlay-word-select'), $('overlay-round-end')];
-overlays.forEach(overlay => {
-  if (overlay) {
-    document.body.appendChild(overlay);
-    overlay.style.position = 'fixed';
-    overlay.style.zIndex = '9999';
-    overlay.style.borderRadius = '0';
-    overlay.style.height = '100dvh';
-    overlay.style.width = '100vw';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  // STRUCTURAL OVERLAY FIX: Pluck overlays out of canvas after DOM loads to break the CSS transform cage
+  const overlays = ['overlay-waiting', 'overlay-word-select', 'overlay-round-end'];
+  overlays.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      document.body.appendChild(el);
+      el.style.position = 'fixed';
+      el.style.zIndex = '9999';
+      el.style.borderRadius = '0';
+      el.style.height = '100dvh';
+      el.style.width = '100vw';
+      el.style.top = '0';
+      el.style.left = '0';
+    }
+  });
+  setupMobileLayout();
 });
 
 /* ════════════════════════════════════════════
@@ -214,9 +218,6 @@ function transitionToGame() {
 /* ════════════════════════════════════════════
    MOBILE LAYOUT (WITH GLOBAL PILL INPUT)
 ════════════════════════════════════════════ */
-/* ════════════════════════════════════════════
-   MOBILE LAYOUT (WITH GLOBAL PILL INPUT)
-════════════════════════════════════════════ */
 function setupMobileLayout() {
   const isMobile = window.innerWidth < 768;
   const gameBody = document.querySelector('.game-body');
@@ -227,22 +228,17 @@ function setupMobileLayout() {
   let bottomRow = document.querySelector('.bottom-mobile-row');
 
   if (isMobile) {
-    // 1. Create mobile split row if missing
     if (!bottomRow) {
       bottomRow = document.createElement('div');
       bottomRow.className = 'bottom-mobile-row';
       gameBody.appendChild(bottomRow);
     }
-    // 2. Move panels into the bottom row
     if (!bottomRow.contains(lb)) bottomRow.appendChild(lb);
     if (!bottomRow.contains(chat)) bottomRow.appendChild(chat);
 
-    // 3. Ensure canvas is at the top
     if (canvasCol && gameBody.firstChild !== canvasCol) {
       gameBody.insertBefore(canvasCol, gameBody.firstChild);
     }
-
-    // 4. Extract chat input to be a global pill at the bottom
     if (chatForm && chatForm.parentNode !== gameBody) {
       gameBody.appendChild(chatForm);
     }
@@ -252,15 +248,12 @@ function setupMobileLayout() {
     if (canvasCol && canvasCol.parentNode !== gameBody) gameBody.appendChild(canvasCol);
     if (chat && chat.parentNode !== gameBody) gameBody.appendChild(chat);
 
-    // Absolutely lock the order: Leaderboard -> Canvas -> Chat
     gameBody.appendChild(lb);
     gameBody.appendChild(canvasCol);
     gameBody.appendChild(chat);
 
-    // Clean up mobile containers
     if (bottomRow) bottomRow.remove();
 
-    // Put chat input safely back inside the chat panel
     if (chatForm && chatForm.parentNode !== chat) {
       chat.appendChild(chatForm);
     }
