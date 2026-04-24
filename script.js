@@ -769,8 +769,7 @@ function addChat(type, name, text) {
   const div = document.createElement('div'); div.className = 'chat-msg ' + (type === 'correct' ? 'correct' : type === 'system' ? 'system' : 'normal');
   div.innerHTML = type === 'system' ? `<span class="msg-text">${escHtml(text)}</span>` : `<span class="msg-name">${escHtml(name)}:</span> <span class="msg-text">${escHtml(text)}</span>`;
   chatMessages.appendChild(div); chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-/* ── THEME TOGGLE (Dark Mode) ── */
+}/* ── THEME TOGGLE (Dark Mode) ── */
 const btnTheme = $('btn-theme');
 const themeIcon = $('theme-icon');
 
