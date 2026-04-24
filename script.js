@@ -207,34 +207,53 @@ function transitionToGame() {
 /* ════════════════════════════════════════════
    MOBILE LAYOUT (WITH GLOBAL PILL INPUT)
 ════════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   MOBILE LAYOUT (WITH GLOBAL PILL INPUT)
+════════════════════════════════════════════ */
 function setupMobileLayout() {
   const isMobile = window.innerWidth < 768;
   const gameBody = document.querySelector('.game-body');
   const lb = $('leaderboard-panel');
   const chat = $('chat-panel');
+  const canvasCol = document.querySelector('.canvas-col');
   const chatForm = document.querySelector('.chat-form');
   let bottomRow = document.querySelector('.bottom-mobile-row');
 
   if (isMobile) {
+    // 1. Create mobile split row if missing
     if (!bottomRow) {
       bottomRow = document.createElement('div');
       bottomRow.className = 'bottom-mobile-row';
+      gameBody.appendChild(bottomRow);
     }
+    // 2. Move panels into the bottom row
     if (!bottomRow.contains(lb)) bottomRow.appendChild(lb);
     if (!bottomRow.contains(chat)) bottomRow.appendChild(chat);
-    if (!gameBody.contains(bottomRow)) gameBody.appendChild(bottomRow);
 
-    // Extract the chat form to act as a seamless global footer pill
+    // 3. Ensure canvas is at the top
+    if (canvasCol && gameBody.firstChild !== canvasCol) {
+      gameBody.insertBefore(canvasCol, gameBody.firstChild);
+    }
+
+    // 4. Extract chat input to be a global pill at the bottom
     if (chatForm && chatForm.parentNode !== gameBody) {
       gameBody.appendChild(chatForm);
     }
   } else {
-    if (bottomRow) {
-      if (lb.parentNode === bottomRow) gameBody.insertBefore(lb, gameBody.firstChild);
-      if (chat.parentNode === bottomRow) gameBody.appendChild(chat);
-      bottomRow.remove();
-    }
-    // Put the chat form safely back inside the chat panel on desktop
+    // DESKTOP: Forcefully restore exact DOM order to fix glitches
+    if (lb && lb.parentNode !== gameBody) gameBody.appendChild(lb);
+    if (canvasCol && canvasCol.parentNode !== gameBody) gameBody.appendChild(canvasCol);
+    if (chat && chat.parentNode !== gameBody) gameBody.appendChild(chat);
+
+    // Absolutely lock the order: Leaderboard -> Canvas -> Chat
+    gameBody.appendChild(lb);
+    gameBody.appendChild(canvasCol);
+    gameBody.appendChild(chat);
+
+    // Clean up mobile containers
+    if (bottomRow) bottomRow.remove();
+
+    // Put chat input safely back inside the chat panel
     if (chatForm && chatForm.parentNode !== chat) {
       chat.appendChild(chatForm);
     }
