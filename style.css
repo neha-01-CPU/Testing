@@ -617,77 +617,62 @@ html, body {
 }
 #game-canvas.eraser { cursor: cell; }
 
-/* ── TOOLBAR (Full-Width Sleek Dock) ── */
+/* ── TOOLBAR (Full-Width Edge-to-Edge) ── */
 .toolbar-container {
   display: flex;
-  justify-content: center;
   width: 100%;
   flex-shrink: 0;
-  padding: 0 2px; /* Small buffer so it doesn't touch the exact edge */
 }
 
 .toolbar-glass {
-  border-radius: 18px; /* Sleek, smooth rectangle */
-  padding: 8px 20px;
-  display: flex; 
-  width: 100%; /* Forces it to stretch from left to right */
+  width: 100%; /* Forces the background to stretch all the way across */
+  display: flex;
   align-items: center;
-  justify-content: space-between; /* Spreads the tools evenly */
-  gap: 4px;
-  position: relative;
-  overflow: visible;
-  min-height: 56px;
-  background: rgba(255, 255, 255, 0.85); /* Brighter, premium glass */
-  backdrop-filter: blur(30px) saturate(200%);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
-  border: 2px solid rgba(74,143,232,0.15); /* Soft blue border */
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06), 0 2px 0 rgba(255,255,255,1) inset; /* 3D top-lighting */
+  justify-content: space-between; /* Spreads the tools evenly from left to right */
+  padding: 8px 16px;
+  border-radius: var(--radius-md); /* Matches the corners of the canvas */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1.5px solid rgba(74,143,232,0.22);
+  box-shadow: var(--shadow);
+  min-height: 52px;
 }
 
 .toolbar-glass .tool-btn {
-  width: 42px; height: 42px; border-radius: 12px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--txt-mid);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 10px;
+  border: none; background: transparent;
+  color: var(--txt-mid); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
   transition: var(--transition); flex-shrink: 0;
 }
 .toolbar-glass .tool-btn svg { width: 18px; height: 18px; }
 
-.toolbar-glass .tool-btn:hover {
-  background: rgba(74,143,232,0.1);
-  color: var(--indigo);
-  transform: translateY(-2px) scale(1.05);
+.toolbar-glass .tool-btn:hover { 
+  background: rgba(74,143,232,0.1); 
+  color: var(--indigo); 
+  transform: translateY(-2px) scale(1.05); 
 }
-.toolbar-glass .tool-btn:active { transform: scale(0.95); }
+.toolbar-glass .tool-btn:active { transform: scale(0.92); }
 
 .toolbar-glass .tool-btn.active {
   background: linear-gradient(135deg, var(--blue), var(--indigo));
-  color: #fff; border-color: transparent;
-  box-shadow: 0 6px 16px var(--indigo-glow);
-  transform: scale(1.05);
+  color: #fff; box-shadow: 0 4px 14px var(--indigo-glow);
 }
 
 .toolbar-glass .tool-btn.danger { color: var(--red); }
-.toolbar-glass .tool-btn.danger:hover { 
-  color: #fff; background: var(--red); 
-  box-shadow: 0 4px 12px var(--red-glow); 
-}
+.toolbar-glass .tool-btn.danger:hover { color: #fff; background: var(--red); }
 
 .tool-divider {
-  width: 2px; height: 28px;
-  background: rgba(74,143,232,0.15);
+  width: 2px; height: 24px; 
+  background: rgba(74,143,232,0.2); 
   border-radius: 2px; flex-shrink: 0;
 }
-
 .color-btn { padding: 0; }
 .color-indicator-ring {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  transition: transform 0.2s var(--spring);
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
-
 /* Popups Hovering Over Canvas */
 .popup-over-canvas {
   position: absolute;
@@ -1031,17 +1016,18 @@ html, body {
   }
   .canvas-wrap { flex: 1; height: 100%; }
 
-  /* Toolbar container full width to center it */
-  .toolbar-container { width: 100%; display: flex; justify-content: center; }
+ /* Toolbar container full width */
+  .toolbar-container { width: 100%; display: flex; }
 
- /* Toolbar glass mobile updates */
+  /* Toolbar glass mobile updates */
   .toolbar-glass {
-    padding: 6px 14px;
-    border-radius: 14px;
-    justify-content: space-between; /* Ensures tools stretch left to right */
-    overflow-x: visible; /* Prevents scrolling so it fits perfectly */
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    justify-content: space-between; /* Crucial: Spreads them out on mobile */
   }
-  .toolbar-glass .tool-btn { width: 38px; height: 38px; }
+  .toolbar-glass::-webkit-scrollbar { display: none; }
+  .toolbar-glass .tool-btn { width: 36px; height: 36px; flex-shrink: 0; }
   .toolbar-glass .tool-btn svg { width: 16px; height: 16px; }
 
   /* Bottom row gets the remaining 40% */
