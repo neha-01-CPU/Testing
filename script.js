@@ -1,5 +1,5 @@
 /* ================================================================
-   PICAZO — script.js  v5.3 (Indestructible Layout & Overlays)
+   PICAZO — script.js  v5.4 (Edge-to-Edge Canvas Fix)
 ================================================================ */
 'use strict';
 
@@ -81,7 +81,6 @@ const contextMenu = $('context-menu'), ctxName = $('ctx-name'), ctxPts = $('ctx-
 const avImg = $('av-img'); 
 
 document.addEventListener('DOMContentLoaded', () => {
-  // STRUCTURAL OVERLAY FIX: Pluck overlays out of canvas after DOM loads to break the CSS transform cage
   const overlays = ['overlay-waiting', 'overlay-word-select', 'overlay-round-end'];
   overlays.forEach(id => {
     const el = document.getElementById(id);
@@ -243,7 +242,6 @@ function setupMobileLayout() {
       gameBody.appendChild(chatForm);
     }
   } else {
-    // DESKTOP: Forcefully restore exact DOM order to fix glitches
     if (lb && lb.parentNode !== gameBody) gameBody.appendChild(lb);
     if (canvasCol && canvasCol.parentNode !== gameBody) gameBody.appendChild(canvasCol);
     if (chat && chat.parentNode !== gameBody) gameBody.appendChild(chat);
@@ -583,11 +581,29 @@ function initCanvas() {
 }
 
 function resizeCanvas() {
-  const rect = canvasWrap.getBoundingClientRect(), W = Math.floor(rect.width), H = Math.floor(rect.height);
+  const rect = canvasWrap.getBoundingClientRect();
+  const W = rect.width, H = rect.height;
   if (W === 0 || H === 0) return;
-  S.dpr = window.devicePixelRatio || 1; gameCanvas.width = W * S.dpr; gameCanvas.height = H * S.dpr;
-  gameCanvas.style.width = W + 'px'; gameCanvas.style.height = H + 'px';
-  ctx.scale(S.dpr, S.dpr); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.fillStyle = 'white'; ctx.fillRect(0, 0, W, H);
+  S.dpr = window.devicePixelRatio || 1; 
+
+  let oldData = null;
+  if (gameCanvas.width > 0 && gameCanvas.height > 0) {
+    oldData = ctx.getImageData(0, 0, gameCanvas.width, gameCanvas.height);
+  }
+
+  gameCanvas.width = W * S.dpr; 
+  gameCanvas.height = H * S.dpr;
+  // WE NO LONGER SET INLINE STYLES. CSS WIDTH:100% WILL HANDLE IT.
+  
+  ctx.scale(S.dpr, S.dpr); 
+  ctx.lineCap = 'round'; 
+  ctx.lineJoin = 'round'; 
+  ctx.fillStyle = 'white'; 
+  ctx.fillRect(0, 0, W, H);
+
+  if (oldData) {
+    ctx.putImageData(oldData, 0, 0);
+  }
 }
 
 function saveState() {
@@ -603,7 +619,15 @@ function getXY(e) {
   } else if (e.changedTouches && e.changedTouches.length > 0) {
     cx = e.changedTouches[0].clientX; cy = e.changedTouches[0].clientY;
   }
-  return { x: cx - r.left, y: cy - r.top };
+  
+  // Exact mathematical ratio to reach absolute edges
+  const scaleX = (gameCanvas.width / S.dpr) / r.width;
+  const scaleY = (gameCanvas.height / S.dpr) / r.height;
+  
+  return { 
+    x: (cx - r.left) * scaleX, 
+    y: (cy - r.top) * scaleY 
+  };
 }
 
 function onDrawStart(e) {
