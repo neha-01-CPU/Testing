@@ -1034,14 +1034,15 @@ html, body {
   /* Toolbar container full width to center it */
   .toolbar-container { width: 100%; display: flex; justify-content: center; }
 
-  /* Toolbar glass mobile updates */
+ /* Toolbar glass mobile updates */
   .toolbar-glass {
-    gap: 5px; padding: 6px 8px; overflow-x: auto;
-    -webkit-overflow-scrolling: touch; justify-content: flex-start; scrollbar-width: none;
+    padding: 6px 14px;
+    border-radius: 14px;
+    justify-content: space-between; /* Ensures tools stretch left to right */
+    overflow-x: visible; /* Prevents scrolling so it fits perfectly */
   }
-  .toolbar-glass::-webkit-scrollbar { display: none; }
-  .toolbar-glass .tool-btn { width: 34px; height: 34px; flex-shrink: 0; }
-  .toolbar-glass .tool-btn svg { width: 15px; height: 15px; }
+  .toolbar-glass .tool-btn { width: 38px; height: 38px; }
+  .toolbar-glass .tool-btn svg { width: 16px; height: 16px; }
 
   /* Bottom row gets the remaining 40% */
   .bottom-mobile-row {
