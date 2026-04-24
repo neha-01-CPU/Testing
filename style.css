@@ -57,7 +57,48 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
+/* ── DARK MODE (Midnight Glass) ── */
+[data-theme="dark"] {
+  --blue:        #60a5fa;
+  --blue-light:  #3b82f6;
+  --blue-glow:   rgba(96,165,250,0.25);
+  --indigo:      #818cf8;
+  --indigo-glow: rgba(129,140,248,0.25);
+  --green:       #34d399;
+  --red:         #fb7185;
 
+  /* Deep space backgrounds */
+  --bg:          #0f172a;
+  --glass:       rgba(30, 41, 59, 0.7);
+  --glass-s:     rgba(30, 41, 59, 0.85);
+  --border:      rgba(255, 255, 255, 0.1);
+  --shadow:      0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-deep: 0 16px 48px rgba(0, 0, 0, 0.7);
+
+  /* Bright text for dark backgrounds */
+  --txt:         #f8fafc;
+  --txt-mid:     #cbd5e1;
+  --txt-light:   #94a3b8;
+}
+
+[data-theme="dark"] body {
+  background: linear-gradient(145deg, #020617 0%, #0f172a 45%, #1e293b 100%);
+}
+
+/* Dark mode blobs */
+[data-theme="dark"] .bg-blob.blob-1 { background: radial-gradient(circle, #312e81, transparent 70%); }
+[data-theme="dark"] .bg-blob.blob-2 { background: radial-gradient(circle, #1e3a8a, transparent 70%); }
+[data-theme="dark"] .bg-blob.blob-3 { background: radial-gradient(circle, #064e3b, transparent 70%); }
+
+/* Component Overrides for Dark Mode */
+[data-theme="dark"] .canvas-wrap { background: #ffffff; } /* Canvas stays white for drawing! */
+[data-theme="dark"] .toolbar-glass { background: rgba(30, 41, 59, 0.9) !important; }
+[data-theme="dark"] .toolbar-glass .tool-btn { background: rgba(15, 23, 42, 0.8) !important; color: #94a3b8 !important; border-color: rgba(255,255,255,0.1) !important; }
+[data-theme="dark"] .toolbar-glass .tool-btn.active { background: linear-gradient(135deg, var(--blue), var(--indigo)) !important; color: #fff !important; }
+[data-theme="dark"] .name-input, [data-theme="dark"] .setting-sel, [data-theme="dark"] .chat-form { background: rgba(15, 23, 42, 0.6); color: #fff; }
+[data-theme="dark"] .chat-input { color: #fff; }
+[data-theme="dark"] .player-item { background: rgba(30, 41, 59, 0.6); border-color: rgba(255,255,255,0.05); }
+[data-theme="dark"] .player-item:hover { background: rgba(30, 41, 59, 0.9); }
 /* ── Background Blobs ── */
 .bg-blob {
   position: fixed; border-radius: 50%;
