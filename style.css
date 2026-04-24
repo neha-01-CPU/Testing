@@ -1046,37 +1046,49 @@ html, body {
    DESKTOP — WIDE SCREENS (>= 768px)
 ════════════════════════════════════════════ */
 @media (min-width: 768px) {
-  /* Force a strict Row layout for Desktop */
+  /* 1. Force strict row layout & remove mobile buffer */
   .game-body { 
     flex-direction: row !important; 
-    align-items: stretch; 
+    align-items: stretch !important; 
+    padding-bottom: 0 !important;
   }
   
-  /* Lock Leaderboard to Left */
+  /* 2. Lock Leaderboard to Left */
   #leaderboard-panel { 
     order: 1 !important; 
-    width: 220px !important; 
+    width: 240px !important; 
+    height: 100% !important;
     flex-shrink: 0; 
   }
   
-  /* Lock Canvas to Center */
+  /* 3. Force Canvas to stretch completely in the middle */
   .canvas-col { 
     order: 2 !important; 
-    flex: 1 !important; 
-    min-width: 0; 
+    flex: 1 1 auto !important; 
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: stretch !important;
+  }
+  .canvas-wrap {
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 400px;
   }
   
-  /* Lock Chat to Right */
+  /* 4. Lock Chat to Right */
   #chat-panel { 
     order: 3 !important; 
-    width: 260px !important; 
+    width: 280px !important; 
+    height: 100% !important;
     flex-shrink: 0; 
   }
   
-  /* Keep the chat input looking like a premium pill on desktop */
+  /* 5. Keep the chat input looking like a premium pill on desktop */
   .chat-form {
-    margin-top: auto; 
+    margin-top: auto !important; 
     border-radius: var(--radius-pill) !important;
+    order: unset !important;
   }
 }
 
